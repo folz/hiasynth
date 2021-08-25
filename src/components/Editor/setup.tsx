@@ -4,11 +4,11 @@ import { history, historyKeymap } from "@codemirror/history";
 import { foldKeymap } from "@codemirror/fold";
 import { indentOnInput } from "@codemirror/language";
 import { highlightActiveLineGutter } from "@codemirror/gutter";
-import { defaultKeymap } from "@codemirror/commands";
+import { defaultKeymap, indentWithTab } from "@codemirror/commands";
 import { bracketMatching } from "@codemirror/matchbrackets";
 import { closeBrackets, closeBracketsKeymap } from "@codemirror/closebrackets";
 import { highlightSelectionMatches, searchKeymap } from "@codemirror/search";
-import { autocompletion, completionKeymap } from "@codemirror/autocomplete";
+import { completionKeymap } from "@codemirror/autocomplete";
 import { commentKeymap } from "@codemirror/comment";
 import { rectangularSelection } from "@codemirror/rectangular-selection";
 import { defaultHighlightStyle } from "@codemirror/highlight";
@@ -26,7 +26,6 @@ export const setup = [
   defaultHighlightStyle.fallback,
   bracketMatching(),
   closeBrackets(),
-  autocompletion(),
   rectangularSelection(),
   highlightSelectionMatches(),
   keymap.of([
@@ -38,6 +37,7 @@ export const setup = [
     ...commentKeymap,
     ...completionKeymap,
     ...lintKeymap,
+    indentWithTab,
   ]),
   javascript(),
   oneDark,
