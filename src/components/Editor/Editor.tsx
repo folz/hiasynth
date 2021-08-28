@@ -60,9 +60,13 @@ export default function Editor(props: EditorProps) {
         this.update([tr]);
 
         if (tr.docChanged) {
-          const contents = this.state.doc.sliceString(0);
+          // Typescript removes files from fsMap when empty, but index.ts is
+          // looked up without checking for existence in other places. Tell
+          // typescript that an empty file has a space in it to prevent this
+          // empty-remove behavior from happening.
+          const contents = tr.newDoc.sliceString(0) || " ";
 
-          env.updateFile("index.ts", contents || "");
+          env.updateFile("index.ts", contents);
         }
       },
     });
