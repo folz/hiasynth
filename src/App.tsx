@@ -1,7 +1,7 @@
 import React from "react";
 import { Editor } from "./components/Editor";
 import { Hydra } from "./components/Hydra";
-import exampleDoc from "./components/Editor/exampleDoc";
+import { exampleDoc } from "./components/Editor/exampleDoc";
 
 const style = {
   imageRendering: "pixelated",
@@ -13,7 +13,7 @@ const style = {
   zIndex: -1,
 };
 
-function App() {
+export function App() {
   return (
     <div className="App" style={{ height: "100%" }}>
       <Editor initialDoc={exampleDoc} />
@@ -25,5 +25,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

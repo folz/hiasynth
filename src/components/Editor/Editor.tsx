@@ -13,7 +13,7 @@ import {
 import { setup } from "./setup";
 import { createLinter } from "./linter";
 import { createAutocompletion } from "./autocompletion";
-import hydraDec from "./hydraDec";
+import { hydraDec } from "./hydraDec";
 
 const compilerOptions: ts.CompilerOptions = {
   target: ts.ScriptTarget.ES2016,
@@ -31,7 +31,7 @@ type EditorProps = {
   initialDoc?: string;
 };
 
-export default function Editor(props: EditorProps) {
+export function Editor(props: EditorProps) {
   const { initialDoc = "" } = props;
   const editorDomNodeRef = useRef<HTMLDivElement | null>(null);
 
@@ -56,7 +56,9 @@ export default function Editor(props: EditorProps) {
     const view = new EditorView({
       state: initialState,
       parent: editorDomNodeRef.current || undefined,
-      dispatch: function (this: EditorView, tr: Transaction) {
+      dispatch(this: EditorView, tr: Transaction) {
+        // `dispatch()` is bound to the EditorView `this`.
+        // eslint-disable-next-line react/no-this-in-sfc
         this.update([tr]);
 
         if (tr.docChanged) {
@@ -74,6 +76,9 @@ export default function Editor(props: EditorProps) {
     return () => {
       view.destroy();
     };
+    // It's okay that initialDoc is not update-able - don't want to trigger a
+    // new editor creation.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

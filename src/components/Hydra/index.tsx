@@ -1,1 +1,1 @@
-export { default as Hydra } from "./Hydra";
+export { Hydra } from "./Hydra";

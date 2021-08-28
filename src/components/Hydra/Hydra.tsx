@@ -4,17 +4,17 @@ import HydraSynth from "hydra-synth";
 type Props = {
   width: number;
   height: number;
-  style?: {};
+  style?: Record<string, unknown>;
 };
 
-export default function Hydra(props: Props) {
+export function Hydra(props: Props): JSX.Element {
   const { height, style = {}, width } = props;
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const hydraRef = useRef(null);
+  const hydraRef = useRef<HydraSynth>();
 
   useEffect(() => {
-    if (hydraRef.current) {
+    if (hydraRef.current || !canvasRef.current) {
       return;
     }
 

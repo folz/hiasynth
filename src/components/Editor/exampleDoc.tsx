@@ -1,3 +1,3 @@
-export default `// Document
+export const exampleDoc = `// Document
 osc().out();
 `;

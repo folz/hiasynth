@@ -1,5 +1,5 @@
 // language=TypeScript
-export default `
+export const hydraDec = `
 
 interface Array<T> {
   ease(easing: "sin"): Array<T>;
