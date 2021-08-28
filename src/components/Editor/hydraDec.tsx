@@ -1,3 +1,4 @@
+// language=TypeScript
 export default `
 
 interface Array<T> {
@@ -138,11 +139,13 @@ declare var o2: Buffer;
 declare var o3: Buffer;
 
 declare var bpm: number;
+declare var height: number;
 declare var mouse: {
   x: number;
   y: number;
 };
 declare var time: number;
+declare var width: number;
 
 declare var m0: number;
 declare var m1: number;
