@@ -1,4 +1,9 @@
-import { drawSelection, highlightSpecialChars, keymap } from "@codemirror/view";
+import {
+  drawSelection,
+  EditorView,
+  highlightSpecialChars,
+  keymap,
+} from "@codemirror/view";
 import { EditorState } from "@codemirror/state";
 import { history, historyKeymap } from "@codemirror/history";
 import { foldKeymap } from "@codemirror/fold";
@@ -40,5 +45,14 @@ export const setup = [
     indentWithTab,
   ]),
   javascript(),
+  EditorView.theme({
+    "&": {
+      backgroundColor: "transparent",
+      fontSize: "24px",
+    },
+    "& .cm-line": {
+      textShadow: "0px 1px 3px hsla(40, 20%, 20%, 0.4)",
+    },
+  }),
   oneDark,
 ];
