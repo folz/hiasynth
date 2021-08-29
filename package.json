@@ -4,7 +4,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "ci": "yarn ci:lint",
+    "ci:lint": "eslint ./src/ --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^0.19.2",
