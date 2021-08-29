@@ -1,16 +1,15 @@
 import { autocompletion, completeFromList } from "@codemirror/autocomplete";
 import { Extension } from "@codemirror/state";
-import { VirtualTypeScriptEnvironment } from "@typescript/vfs";
+import { tsEnvStateField } from "./typescript";
 
-export function createAutocompletion(
-  env: VirtualTypeScriptEnvironment
-): Extension {
+export function createAutocompletion(): Extension {
   return autocompletion({
     override: [
       (ctx) => {
-        const { pos } = ctx;
+        const { pos, state } = ctx;
+        const tsEnv = state.field(tsEnvStateField);
 
-        const completions = env.languageService.getCompletionsAtPosition(
+        const completions = tsEnv.languageService.getCompletionsAtPosition(
           "index.ts",
           pos,
           {}

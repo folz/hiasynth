@@ -6,12 +6,18 @@ import {
 import { Diagnostic as LintDiagnostic, linter } from "@codemirror/lint";
 import { EditorView } from "@codemirror/view";
 import { Extension } from "@codemirror/state";
-import { VirtualTypeScriptEnvironment } from "@typescript/vfs";
+import { tsEnvStateField } from "./typescript";
 
-export function createLinter(env: VirtualTypeScriptEnvironment): Extension {
+export function createLinter(): Extension {
   return linter(
-    (_view: EditorView) =>
-      env.languageService.getSemanticDiagnostics("index.ts").map(convertToLint),
+    (view: EditorView) => {
+      const { state } = view;
+      const tsEnv = state.field(tsEnvStateField);
+
+      return tsEnv.languageService
+        .getSemanticDiagnostics("index.ts")
+        .map(convertToLint);
+    },
     {
       delay: 400,
     }

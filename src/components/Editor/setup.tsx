@@ -21,6 +21,10 @@ import { lintKeymap } from "@codemirror/lint";
 import { javascript } from "@codemirror/lang-javascript";
 import { oneDark } from "@codemirror/theme-one-dark";
 
+import { createAutocompletion } from "./autocompletion";
+import { createLinter } from "./linter";
+import { tsEnvStateField } from "./typescript";
+
 export const setup = [
   highlightActiveLineGutter(),
   highlightSpecialChars(),
@@ -55,4 +59,7 @@ export const setup = [
     },
   }),
   oneDark,
+  tsEnvStateField,
+  createLinter(),
+  createAutocompletion(),
 ];
