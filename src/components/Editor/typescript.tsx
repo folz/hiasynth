@@ -7,7 +7,7 @@ import {
 } from "@typescript/vfs";
 import ts from "typescript";
 import lzstring from "lz-string";
-import { hydraDec } from "./hydraDec";
+import { hiasynthDec } from "./hiasynthDec";
 
 const compilerOptions: ts.CompilerOptions = {
   target: ts.ScriptTarget.ES2016,
@@ -24,7 +24,7 @@ const fsMapDefault = await createDefaultMapFromCDN(
 export const tsEnvStateField = StateField.define<VirtualTypeScriptEnvironment>({
   create(state) {
     const fsMap = new Map(fsMapDefault);
-    fsMap.set("hydra.d.ts", hydraDec);
+    fsMap.set("hiasynth.d.ts", hiasynthDec);
     fsMap.set("index.ts", state.sliceDoc() || " ");
 
     const system = createSystem(fsMap);

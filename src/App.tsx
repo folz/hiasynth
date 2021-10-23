@@ -1,27 +1,17 @@
 import React from "react";
 import { Editor } from "./components/Editor";
-import { Hydra } from "./components/Hydra";
-import { exampleDoc } from "./components/Editor/exampleDoc";
+import { Hiasynth } from "./components/Hiasynth";
+import { useWebMidi } from "./useWebMidi";
+import { useMathGlobals } from "./useMathGlobals";
 
-const style = {
-  imageRendering: "pixelated",
-  position: "absolute",
-  top: 0,
-  right: 0,
-  bottom: 0,
-  left: 0,
-  zIndex: -1,
-};
+export function App(): JSX.Element {
+  useWebMidi();
+  useMathGlobals();
 
-export function App() {
   return (
-    <div className="App" style={{ height: "100%" }}>
-      <Editor initialDoc={exampleDoc} />
-      <Hydra
-        width={window.innerWidth}
-        height={window.innerHeight}
-        style={style}
-      />
-    </div>
+    <>
+      <Editor />
+      <Hiasynth width={window.innerWidth} height={window.innerHeight} />
+    </>
   );
 }

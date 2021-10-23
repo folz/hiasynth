@@ -57,7 +57,8 @@ export const setup = [
       fontSize: "24px",
     },
     "& .cm-line": {
-      textShadow: "0px 1px 3px hsla(40, 20%, 20%, 0.4)",
+      maxWidth: "fit-content",
+      background: "hsla(50,23%,5%,0.6)",
     },
   }),
   oneDark,
