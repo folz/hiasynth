@@ -2,11 +2,11 @@
 export const hiasynthDec = `
 
 interface Array<T> {
-  ease(easing: string | (() => number)): Array<T>;
-  fast(amount: number): Array<T>;
-  smooth(amount: number): Array<T>;
-  offset(amount: number): Array<T>;
-  fit(low: number, high: number): Array<T>;
+  ease(easing?: string | (() => number)): Array<T>;
+  fast(amount?: number): Array<T>;
+  smooth(amount?: number): Array<T>;
+  offset(amount?: number): Array<T>;
+  fit(low?: number, high?: number): Array<T>;
 }
 
 interface Source {
