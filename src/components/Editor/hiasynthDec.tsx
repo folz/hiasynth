@@ -169,7 +169,9 @@ declare var width: number;
 
 declare var cc: Record<number, number>;
 
-declare var mapMidi: (from: number, to: number, midi: number) => number;
+declare var range: (
+  value: number = 0, from: number = 0, to: number = 1, domainStart: number = 0, domainEnd: number = 1
+) => number;
 declare var pixels: () => number;
 
 declare var abs: Math['abs'];

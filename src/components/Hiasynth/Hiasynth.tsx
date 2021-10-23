@@ -22,6 +22,17 @@ type HiasynthProps = {
 
 // TODO
 window.t = t;
+window.range = function range(
+  value: number = 0,
+  toStart: number = 0,
+  toEnd: number = 1,
+  fromStart: number = 0,
+  fromEnd: number = 1
+) {
+  return (
+    toStart + ((value - fromStart) * (toEnd - toStart)) / (fromEnd - fromStart)
+  );
+};
 
 export const Hiasynth = forwardRef<HTMLCanvasElement, HiasynthProps>(
   function Hiasynth(props, ref) {
