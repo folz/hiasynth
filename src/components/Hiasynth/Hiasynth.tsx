@@ -46,13 +46,20 @@ export const Hiasynth = forwardRef<HTMLCanvasElement, HiasynthProps>(
         return;
       }
 
-      hiasynthRef.current = new HiasynthRenderer({
+      const renderer = new HiasynthRenderer({
+        width,
+        height,
         regl: reglRef.current,
         precision: "mediump",
       });
 
-      hiasynthRef.current?.loop.start();
+      renderer.loop.start();
+      hiasynthRef.current = renderer;
     }, [isReglLoaded]);
+
+    useEffect(() => {
+      hiasynthRef.current?.setResolution(width, height);
+    }, [width, height]);
 
     return (
       <canvas
