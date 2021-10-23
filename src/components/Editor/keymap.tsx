@@ -30,15 +30,17 @@ export const keymap: KeyBinding = {
 
     if (diagnostics.length) {
       console.log("diagnostics", diagnostics);
-    } else {
-      const contents = statementsToEval
-        .map((statement) => state.sliceDoc(statement.pos, statement.end))
-        .join("");
-
-      // This is the whole point.
-      // eslint-disable-next-line no-eval
-      eval(contents);
     }
+
+    const contents = statementsToEval
+      .map((statement) => state.sliceDoc(statement.pos, statement.end))
+      .join("");
+
+    console.log("eval", contents);
+
+    // This is the whole point.
+    // eslint-disable-next-line no-eval
+    eval(contents);
 
     return true;
   },
@@ -46,18 +48,27 @@ export const keymap: KeyBinding = {
     const { state } = target;
     const tsEnv = state.field(tsEnvStateField);
 
+    const ast = tsEnv.getSourceFile("index.ts");
+
+    if (!ast) return true;
+
+    const statementsToEval = ast.statements;
+
     const diagnostics =
       tsEnv.languageService.getSemanticDiagnostics("index.ts");
 
     if (diagnostics.length) {
       console.log("diagnostics", diagnostics);
-    } else {
-      const contents = state.sliceDoc();
-
-      // This is the whole point.
-      // eslint-disable-next-line no-eval
-      eval(contents);
     }
+    const contents = statementsToEval
+      .map((statement) => state.sliceDoc(statement.pos, statement.end))
+      .join("");
+
+    console.log("eval", contents);
+
+    // This is the whole point.
+    // eslint-disable-next-line no-eval
+    eval(contents);
 
     return true;
   },
