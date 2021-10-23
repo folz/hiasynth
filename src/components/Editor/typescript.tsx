@@ -25,7 +25,7 @@ export const tsEnvStateField = StateField.define<VirtualTypeScriptEnvironment>({
   create(state) {
     const fsMap = new Map(fsMapDefault);
     fsMap.set("hydra.d.ts", hydraDec);
-    fsMap.set("index.ts", state.sliceDoc());
+    fsMap.set("index.ts", state.sliceDoc() || " ");
 
     const system = createSystem(fsMap);
 
