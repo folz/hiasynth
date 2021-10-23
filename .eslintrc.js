@@ -17,6 +17,7 @@ module.exports = {
     "prefer-arrow-callback": "off",
     "import/no-default-export": "error",
     "import/prefer-default-export": "off",
+    "react/jsx-props-no-spreading": "off",
     "react/require-default-props": "off",
     "react/prop-types": "off",
     "@typescript-eslint/no-use-before-define": ["error", "nofunc"],
