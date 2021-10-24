@@ -33,6 +33,10 @@ export function Editor(props: EditorProps) {
   }, []);
 
   return (
-    <div ref={editorDomNodeRef} className="Editor" style={{ height: "100%" }} />
+    <div
+      ref={editorDomNodeRef}
+      className="Editor"
+      style={{ height: "100%", padding: "16px" }}
+    />
   );
 }

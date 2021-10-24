@@ -13,13 +13,18 @@ const compilerOptions: ts.CompilerOptions = {
   target: ts.ScriptTarget.ES2016,
   esModuleInterop: true,
 };
-const fsMapDefault = await createDefaultMapFromCDN(
+const fsMapDefaultFull = await createDefaultMapFromCDN(
   compilerOptions,
   ts.version,
   true,
   ts,
   lzstring
 );
+
+const fsMapDefault = new Map();
+fsMapDefault.set("/lib.d.ts", fsMapDefaultFull.get("/lib.d.ts"));
+fsMapDefault.set("/lib.es5.d.ts", fsMapDefaultFull.get("/lib.es5.d.ts"));
+fsMapDefault.set("/lib.es6.d.ts", fsMapDefaultFull.get("/lib.es6.d.ts"));
 
 export const tsEnvStateField = StateField.define<VirtualTypeScriptEnvironment>({
   create(state) {

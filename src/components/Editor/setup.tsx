@@ -22,7 +22,8 @@ import { javascript } from "@codemirror/lang-javascript";
 import { oneDark } from "@codemirror/theme-one-dark";
 
 import { createAutocompletion } from "./autocompletion";
-import { keymap as editorKeymap } from "./keymap";
+import { evalKeymap } from "./evalKeymap";
+import { saveKeymap } from "./saveKeymap";
 import { createLinter } from "./linter";
 import { tsEnvStateField } from "./typescript";
 
@@ -48,13 +49,14 @@ export const setup = [
     ...completionKeymap,
     ...lintKeymap,
     indentWithTab,
-    editorKeymap,
+    evalKeymap,
+    saveKeymap,
   ]),
   javascript(),
   EditorView.theme({
     "&": {
       backgroundColor: "transparent",
-      fontSize: "24px",
+      fontSize: "20px",
     },
     "& .cm-line": {
       maxWidth: "fit-content",

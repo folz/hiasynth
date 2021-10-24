@@ -40,8 +40,10 @@ export function App(): JSX.Element {
   });
 
   return (
-    <div ref={rootRef}>
-      <Editor />
+    <div ref={rootRef} style={{ height: "100%" }}>
+      <Editor
+        initialDoc={localStorage.getItem("hiasynth-document") || undefined}
+      />
       <Hiasynth {...dimensions} />
     </div>
   );

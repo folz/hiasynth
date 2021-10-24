@@ -1,7 +1,7 @@
 import { KeyBinding } from "@codemirror/view";
 import { tsEnvStateField } from "./typescript";
 
-export const keymap: KeyBinding = {
+export const evalKeymap: KeyBinding = {
   key: "Alt-Enter",
   run(target) {
     // TODO: Handle not eval'ing when cursor is on a blank line
@@ -25,13 +25,6 @@ export const keymap: KeyBinding = {
       )
     );
 
-    const diagnostics =
-      tsEnv.languageService.getSemanticDiagnostics("index.ts");
-
-    if (diagnostics.length) {
-      console.log("diagnostics", diagnostics);
-    }
-
     const contents = statementsToEval
       .map((statement) => state.sliceDoc(statement.pos, statement.end))
       .join("");
@@ -40,7 +33,8 @@ export const keymap: KeyBinding = {
 
     // This is the whole point.
     // eslint-disable-next-line no-eval
-    eval(contents);
+    const globalEval = eval;
+    globalEval(contents);
 
     return true;
   },
@@ -54,12 +48,6 @@ export const keymap: KeyBinding = {
 
     const statementsToEval = ast.statements;
 
-    const diagnostics =
-      tsEnv.languageService.getSemanticDiagnostics("index.ts");
-
-    if (diagnostics.length) {
-      console.log("diagnostics", diagnostics);
-    }
     const contents = statementsToEval
       .map((statement) => state.sliceDoc(statement.pos, statement.end))
       .join("");
@@ -68,7 +56,8 @@ export const keymap: KeyBinding = {
 
     // This is the whole point.
     // eslint-disable-next-line no-eval
-    eval(contents);
+    const globalEval = eval;
+    globalEval(contents);
 
     return true;
   },
