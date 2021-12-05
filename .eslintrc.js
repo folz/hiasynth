@@ -20,6 +20,7 @@ module.exports = {
     "react/jsx-props-no-spreading": "off",
     "react/require-default-props": "off",
     "react/prop-types": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-inferrable-types": "off",
     "@typescript-eslint/no-use-before-define": ["error", "nofunc"],
     "@typescript-eslint/lines-between-class-members": [

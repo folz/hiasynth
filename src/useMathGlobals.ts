@@ -15,5 +15,5 @@ export function useMathGlobals() {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       window[key] = Math[key];
     }, []);
-  });
+  }, []);
 }

@@ -28,6 +28,10 @@ function addMidiListerner(inputDevice: Input) {
 export function useWebMidi() {
   useEffect(() => {
     window.cc = cc;
+    for (let i = 0; i < 999; i += 1) {
+      // @ts-ignore
+      window.cc[i] = 0;
+    }
 
     WebMidi.enable((err) => {
       if (err) {

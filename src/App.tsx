@@ -3,6 +3,7 @@ import { Editor } from "./components/Editor";
 import { Hiasynth } from "./components/Hiasynth";
 import { useWebMidi } from "./useWebMidi";
 import { useMathGlobals } from "./useMathGlobals";
+import { useUtilGlobals } from "./useUtilGlobals";
 
 export function App(): JSX.Element {
   const [dimensions, setDimensions] = useState({
@@ -14,6 +15,7 @@ export function App(): JSX.Element {
 
   useWebMidi();
   useMathGlobals();
+  useUtilGlobals();
 
   useEffect(() => {
     const listener = () => {
