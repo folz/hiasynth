@@ -1,5 +1,5 @@
 // language=TypeScript
-export const hiasynthDec = `
+export const hydratsDec = `
 
 interface Array<T> {
   ease(easing?: string | (() => number)): Array<T>;

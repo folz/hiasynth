@@ -5,7 +5,7 @@ export const saveKeymap: KeyBinding = {
   run(target) {
     const { state } = target;
 
-    localStorage.setItem("hiasynth-document", state.sliceDoc());
+    localStorage.setItem("hydrats-document", state.sliceDoc());
 
     return true;
   },

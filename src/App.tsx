@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Editor } from "./components/Editor";
-import { Hiasynth } from "./components/Hiasynth";
+import { HydraTS } from "./components/HydraTS";
 import { useWebMidi } from "./useWebMidi";
 import { useMathGlobals } from "./useMathGlobals";
 import { useUtilGlobals } from "./useUtilGlobals";
@@ -44,9 +44,9 @@ export function App(): JSX.Element {
   return (
     <div ref={rootRef} style={{ height: "100%" }}>
       <Editor
-        initialDoc={localStorage.getItem("hiasynth-document") || undefined}
+        initialDoc={localStorage.getItem("hydrats-document") || undefined}
       />
-      <Hiasynth {...dimensions} />
+      <HydraTS {...dimensions} />
     </div>
   );
 }

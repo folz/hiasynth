@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef, useState } from "react";
 import REGL, { Regl } from "regl";
-import HiasynthRenderer from "hiasynth";
-import * as t from "hiasynth/src/glsl/t";
+import HydraTSRenderer from "hydra-ts";
+import * as t from "hydra-ts/src/glsl/t";
 
 const style = {
   imageRendering: "pixelated",
@@ -15,7 +15,7 @@ const style = {
   backgroundColor: "#000000",
 } as const;
 
-type HiasynthProps = {
+type HydraTSProps = {
   width: number;
   height: number;
 };
@@ -34,18 +34,18 @@ window.range = function range(
   );
 };
 
-export const Hiasynth = forwardRef<HTMLCanvasElement, HiasynthProps>(
-  function Hiasynth(props, ref) {
+export const HydraTS = forwardRef<HTMLCanvasElement, HydraTSProps>(
+  function HydraTS(props, ref) {
     const { height, width } = props;
 
     const reglRef = useRef<Regl>();
-    const hiasynthRef = useRef<HiasynthRenderer>();
+    const hydratsRef = useRef<HydraTSRenderer>();
     const [isReglLoaded, setIsReglLoaded] = useState(false);
 
     useEffect(() => {
       requestAnimationFrame(() => {
         reglRef.current = REGL({
-          canvas: "#hiasynth-canvas",
+          canvas: "#hydrats-canvas",
           pixelRatio: 1,
         });
         setIsReglLoaded(true);
@@ -53,11 +53,11 @@ export const Hiasynth = forwardRef<HTMLCanvasElement, HiasynthProps>(
     }, []);
 
     useEffect(() => {
-      if (!isReglLoaded || !reglRef.current || hiasynthRef.current) {
+      if (!isReglLoaded || !reglRef.current || hydratsRef.current) {
         return;
       }
 
-      const renderer = new HiasynthRenderer({
+      const renderer = new HydraTSRenderer({
         width,
         height,
         regl: reglRef.current,
@@ -65,17 +65,17 @@ export const Hiasynth = forwardRef<HTMLCanvasElement, HiasynthProps>(
       });
 
       renderer.loop.start();
-      hiasynthRef.current = renderer;
+      hydratsRef.current = renderer;
     }, [isReglLoaded]);
 
     useEffect(() => {
-      hiasynthRef.current?.setResolution(width, height);
+      hydratsRef.current?.setResolution(width, height);
     }, [width, height]);
 
     return (
       <canvas
         ref={ref}
-        id="hiasynth-canvas"
+        id="hydrats-canvas"
         width={width}
         height={height}
         style={style}
