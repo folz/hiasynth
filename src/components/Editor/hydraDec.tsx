@@ -78,10 +78,10 @@ interface Texture {
   hue: (hue?: Arg<number>) => Texture;
   colorama: (amount?: Arg<number>) => Texture;
   sum: (scale?: Arg<number>) => Texture;
-  r: (scale, offset) => Texture;
-  g: (scale, offset) => Texture;
-  b: (scale, offset) => Texture;
-  a: (scale, offset) => Texture;
+  r: (scale?: Arg<number>, offset?: Arg<number>) => Texture;
+  g: (scale?: Arg<number>, offset?: Arg<number>) => Texture;
+  b: (scale?: Arg<number>, offset?: Arg<number>) => Texture;
+  a: (scale?: Arg<number>, offset?: Arg<number>) => Texture;
   add: (c: Drawable, amount?: Arg<number>) => Texture;
   sub: (c: Drawable, amount?: Arg<number>) => Texture;
   layer: (c: Drawable) => Texture;
@@ -166,6 +166,7 @@ declare var bpm: number;
 declare var height: number;
 declare var time: number;
 declare var width: number;
+declare var speed: number;
 
 declare var cc: Record<number, number>;
 
