@@ -3,6 +3,7 @@ import WebMidi, { Input } from "webmidi";
 
 const connected = [];
 const cc = {};
+let activeOut = 0;
 
 function getDeviceById(id: number) {
   const index = connected.findIndex((d) => d.id === id);
@@ -23,6 +24,30 @@ function addMidiListerner(inputDevice: Input) {
     cc[mId] = e.value / 127;
     console.log(mId, cc[mId], `(raw ${e.value})`);
   });
+
+  device.addListener("controlchange", "all", (e) => {
+    const mId = e.controller.number;
+
+    if (mId === 43 && e.value === 127) {
+      console.log(activeOut)
+      activeOut -= 1;
+      if (activeOut < 0) {
+        activeOut = 3;
+      }
+      console.log(activeOut)
+      window.render(window[`o${activeOut}`])
+    }
+
+    if (mId === 44 && e.value === 127) {
+      console.log(activeOut)
+      activeOut += 1;
+      if (activeOut > 3) {
+        activeOut = 0;
+      }
+      console.log(activeOut)
+      window.render(window[`o${activeOut}`])
+    }
+  })
 }
 
 export function useWebMidi() {
