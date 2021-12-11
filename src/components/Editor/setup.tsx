@@ -62,6 +62,9 @@ export const setup = [
       maxWidth: "fit-content",
       background: "hsla(50,23%,5%,0.6)",
     },
+    "&.cm-focused": {
+      outline: 'none'
+    }
   }),
   oneDark,
   tsEnvStateField,
