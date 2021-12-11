@@ -36,7 +36,7 @@ export function Editor(props: EditorProps) {
     <div
       ref={editorDomNodeRef}
       className="Editor"
-      style={{ height: "100%", padding: "16px" }}
+      style={{ height: "100%", padding: "1rem" }}
     />
   );
 }
