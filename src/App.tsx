@@ -17,17 +17,17 @@ export function App(): JSX.Element {
   useMathGlobals();
   useUtilGlobals();
 
-  useEffect(() => {
-    const listener = () => {
-      rootRef.current?.requestFullscreen();
-    };
-
-    window.addEventListener("dblclick", listener);
-
-    return () => {
-      window.removeEventListener("dblclick", listener);
-    };
-  });
+  // useEffect(() => {
+  //   const listener = () => {
+  //     rootRef.current?.requestFullscreen();
+  //   };
+  //
+  //   window.addEventListener("dblclick", listener);
+  //
+  //   return () => {
+  //     window.removeEventListener("dblclick", listener);
+  //   };
+  // });
 
   useEffect(() => {
     const listener = () => {
