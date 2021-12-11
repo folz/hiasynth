@@ -1,1 +1,0 @@
-export { Hiasynth } from "./Hiasynth";

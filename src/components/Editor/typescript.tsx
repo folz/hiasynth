@@ -7,7 +7,7 @@ import {
 } from "@typescript/vfs";
 import ts from "typescript";
 import lzstring from "lz-string";
-import { hiasynthDec } from "./hiasynthDec";
+import { hydraDec } from "./hydraDec";
 
 const compilerOptions: ts.CompilerOptions = {
   target: ts.ScriptTarget.ES2016,
@@ -29,7 +29,7 @@ fsMapDefault.set("/lib.es6.d.ts", fsMapDefaultFull.get("/lib.es6.d.ts"));
 export const tsEnvStateField = StateField.define<VirtualTypeScriptEnvironment>({
   create(state) {
     const fsMap = new Map(fsMapDefault);
-    fsMap.set("hiasynth.d.ts", hiasynthDec);
+    fsMap.set("hydra.d.ts", hydraDec);
     fsMap.set("index.ts", state.sliceDoc() || " ");
 
     const system = createSystem(fsMap);
