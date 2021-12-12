@@ -12,9 +12,14 @@ export function range(
   );
 }
 
+export function v(path) {
+  return `/v/${path}.mp4`;
+}
+
 export function useUtilGlobals(): void {
   useEffect(() => {
     // @ts-ignore
     window.range = range;
+    window.v = v;
   }, []);
 }

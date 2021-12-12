@@ -175,6 +175,36 @@ declare var range: (
 ) => number;
 declare var pixels: () => number;
 
+declare var v: (
+  name:
+    "boat" |
+    "bonfire" |
+    "borealis" |
+    "bubbles" |
+    "candles" |
+    "fire" |
+    "graypaint" |
+    "greendye" |
+    "highway" |
+    "jellies" |
+    "jelly" |
+    "lightshow" |
+    "milkyway" |
+    "moon" |
+    "mosaic" |
+    "ocean" |
+    "prism" |
+    "purplesmoke" |
+    "redbokeh" |
+    "smoke" |
+    "snowfall" |
+    "stars" |
+    "taxi" |
+    "tealpaint" |
+    "tree" |
+    "waterfall"
+) => string;
+
 declare var abs: Math['abs'];
 declare var acos: Math['acos'];
 declare var acosh: Math['acosh'];
