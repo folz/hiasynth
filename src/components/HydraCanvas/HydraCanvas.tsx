@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef, useState } from "react";
 import REGL, { Regl } from "regl";
-import Hydra from "hydra-ts";
-import * as t from "hydra-ts/src/glsl/t";
+import { Hydra, generators } from "hydra-ts";
+import ArrayUtils from "hydra-ts/src/lib/array-utils";
 
 const style = {
   imageRendering: "pixelated",
@@ -21,7 +21,6 @@ type HydraCanvasProps = {
 };
 
 // TODO
-window.t = t;
 window.range = function range(
   value: number = 0,
   toStart: number = 0,
@@ -42,6 +41,8 @@ export const HydraCanvas = forwardRef<HTMLCanvasElement, HydraCanvasProps>(
     const hydraRef = useRef<Hydra>();
     const [isReglLoaded, setIsReglLoaded] = useState(false);
 
+    useGlobalHydraGenerators();
+
     useEffect(() => {
       requestAnimationFrame(() => {
         reglRef.current = REGL({
@@ -57,6 +58,8 @@ export const HydraCanvas = forwardRef<HTMLCanvasElement, HydraCanvasProps>(
         return;
       }
 
+      ArrayUtils.init();
+
       const renderer = new Hydra({
         width,
         height,
@@ -65,6 +68,23 @@ export const HydraCanvas = forwardRef<HTMLCanvasElement, HydraCanvasProps>(
       });
 
       renderer.loop.start();
+
+      const { sources, outputs, render } = renderer;
+      const [s0, s1, s2, s3] = sources;
+      const [o0, o1, o2, o3] = outputs;
+
+      window["render"] = render;
+
+      window["s0"] = s0;
+      window["s1"] = s1;
+      window["s2"] = s2;
+      window["s3"] = s3;
+
+      window["o0"] = o0;
+      window["o1"] = o1;
+      window["o2"] = o2;
+      window["o3"] = o3;
+
       hydraRef.current = renderer;
     }, [isReglLoaded]);
 
@@ -83,3 +103,7 @@ export const HydraCanvas = forwardRef<HTMLCanvasElement, HydraCanvasProps>(
     );
   }
 );
+
+function useGlobalHydraGenerators() {
+  Object.keys(generators).forEach((name) => (window[name] = generators[name]));
+}
