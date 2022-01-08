@@ -1,6 +1,6 @@
 {
   "name": "ent",
-  "license": "SEE LICENSE IN <<< ALL RIGHTS RESERVED >>>",
+  "license": "AGPL",
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
