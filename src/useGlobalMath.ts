@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-export function useMathGlobals() {
+export function useGlobalMath() {
   useEffect(() => {
     const mathKeys = new Set(Object.getOwnPropertyNames(Math));
     const windowKeys = new Set(Object.getOwnPropertyNames(window));

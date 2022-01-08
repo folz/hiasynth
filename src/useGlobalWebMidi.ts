@@ -29,28 +29,24 @@ function addMidiListerner(inputDevice: Input) {
     const mId = e.controller.number;
 
     if (mId === 43 && e.value === 127) {
-      console.log(activeOut)
       activeOut -= 1;
       if (activeOut < 0) {
         activeOut = 3;
       }
-      console.log(activeOut)
-      window.render(window[`o${activeOut}`])
+      window.render(window[`o${activeOut}`]);
     }
 
     if (mId === 44 && e.value === 127) {
-      console.log(activeOut)
       activeOut += 1;
       if (activeOut > 3) {
         activeOut = 0;
       }
-      console.log(activeOut)
-      window.render(window[`o${activeOut}`])
+      window.render(window[`o${activeOut}`]);
     }
-  })
+  });
 }
 
-export function useWebMidi() {
+export function useGlobalWebMidi() {
   useEffect(() => {
     window.cc = cc;
     for (let i = 0; i < 999; i += 1) {

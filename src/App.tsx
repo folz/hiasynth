@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Editor } from "./components/Editor";
 import { HydraCanvas } from "./components/HydraCanvas";
-import { useWebMidi } from "./useWebMidi";
-import { useMathGlobals } from "./useMathGlobals";
-import { useUtilGlobals } from "./useUtilGlobals";
+import { useGlobalWebMidi } from "./useGlobalWebMidi";
+import { useGlobalMath } from "./useGlobalMath";
+import { useGlobalUtils } from "./useGlobalUtils";
 
 export function App(): JSX.Element {
   const [dimensions, setDimensions] = useState({
@@ -13,9 +13,9 @@ export function App(): JSX.Element {
 
   const rootRef = useRef<HTMLDivElement>(null);
 
-  useWebMidi();
-  useMathGlobals();
-  useUtilGlobals();
+  useGlobalWebMidi();
+  useGlobalMath();
+  useGlobalUtils();
 
   // useEffect(() => {
   //   const listener = () => {
@@ -43,9 +43,7 @@ export function App(): JSX.Element {
 
   return (
     <div ref={rootRef} style={{ height: "100%" }}>
-      <Editor
-        initialDoc={localStorage.getItem("ent-document") || undefined}
-      />
+      <Editor initialDoc={localStorage.getItem("ent-document") || undefined} />
       <HydraCanvas {...dimensions} />
     </div>
   );

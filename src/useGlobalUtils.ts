@@ -16,7 +16,7 @@ export function v(path) {
   return `/v/${path}.mp4`;
 }
 
-export function useUtilGlobals(): void {
+export function useGlobalUtils(): void {
   useEffect(() => {
     // @ts-ignore
     window.range = range;
