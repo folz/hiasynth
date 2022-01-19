@@ -1,0 +1,19 @@
+{
+  "name": "environment",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "serve": "vite preview",
+    "ci": "yarn ci:lint",
+    "ci:lint": "eslint ./src/ --ext .js,.jsx,.ts,.tsx"
+  },
+  "dependencies": {
+    "editor": "workspace:*",
+    "hydra-ts": "^1.0.0",
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0",
+    "regl": "^1.3.9",
+    "webmidi": "^2.5.3"
+  },
+  "packageManager": "yarn@3.1.1"
+}
