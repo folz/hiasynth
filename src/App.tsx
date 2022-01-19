@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Editor } from "./components/Editor";
+import { Editor } from "editor";
 import { HydraCanvas } from "./components/HydraCanvas";
 import { useGlobalWebMidi } from "./useGlobalWebMidi";
 import { useGlobalMath } from "./useGlobalMath";
