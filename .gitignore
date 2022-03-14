@@ -1,5 +1,6 @@
 node_modules
 .DS_Store
+v
 dist
 dist-ssr
 *.local
@@ -10,4 +11,3 @@ dist-ssr
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-public/v/
