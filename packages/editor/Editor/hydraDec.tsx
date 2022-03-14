@@ -25,13 +25,11 @@ interface Buffer {
   fbos: [];
 }
 
-type Arg<T> = T | T[] | (() => T);
+type Synth = {bpm: number, fps: undefined, resolution: [number, number], speed: number, stats: {}, time: number}
+
+type Arg<T> = T | T[] | ((args: Synth) => T);
 
 type Drawable = Source | Buffer | Texture;
-
-type TransformResult = {
-  __transform_result__: true
-};
 
 interface Texture {
   rotate: (angle?: Arg<number>, speed?: Arg<number>) => Texture;
@@ -112,16 +110,8 @@ interface Texture {
     offset?: Arg<number>
   ) => Texture;
   modulateHue: (c: Drawable, amount?: Arg<number>) => Texture;
-  then: (...args: TransformResult[]) => Texture;
-  skip: (...args: TransformResult[]) => Texture;
   out: (buffer: Buffer) => void;
 }
-
-interface T {
-  Invert: () => TransformResult;
-}
-
-declare var t: T;
 
 declare var noise: (scale?: Arg<number>, offset?: Arg<number>) => Texture;
 declare var voronoi: (
@@ -162,18 +152,12 @@ declare var o1: Buffer;
 declare var o2: Buffer;
 declare var o3: Buffer;
 
-declare var bpm: number;
-declare var height: number;
-declare var time: number;
-declare var width: number;
-declare var speed: number;
-
+declare var synth: Synth;
 declare var cc: Record<number, number>;
 
 declare var range: (
   value: number = 0, from: number = 0, to: number = 1, domainStart: number = 0, domainEnd: number = 1
 ) => number;
-declare var pixels: () => number;
 
 declare var v: (
   name:
@@ -248,5 +232,4 @@ declare var LOG2E: Math['LOG2E'];
 declare var PI: Math['PI'];
 declare var SQRT1_2: Math['SQRT1_2'];
 declare var SQRT2: Math['SQRT2'];
-
 `;
