@@ -69,11 +69,13 @@ export const HydraCanvas = forwardRef<HTMLCanvasElement, HydraCanvasProps>(
 
       renderer.loop.start();
 
-      const { sources, outputs, render } = renderer;
+      const { sources, outputs, render, hush, synth } = renderer;
       const [s0, s1, s2, s3] = sources;
       const [o0, o1, o2, o3] = outputs;
 
       window["render"] = render;
+      window["hush"] = hush;
+      window["synth"] = synth;
 
       window["s0"] = s0;
       window["s1"] = s1;
