@@ -56,7 +56,7 @@ export const setup = [
   EditorView.theme({
     "&": {
       backgroundColor: "transparent",
-      fontSize: "20px",
+      fontSize: "16px",
     },
     "& .cm-line": {
       maxWidth: "fit-content",
