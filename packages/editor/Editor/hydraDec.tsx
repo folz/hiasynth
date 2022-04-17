@@ -138,6 +138,18 @@ declare var solid: (
   b?: Arg<number>,
   a?: Arg<number>
 ) => Texture;
+declare var square: (
+  frequency?: Arg<number>,
+  sync?: Arg<number>,
+) => Texture;
+declare var tri: (
+  frequency?: Arg<number>,
+  sync?: Arg<number>,
+) => Texture;
+declare var saw: (
+  frequency?: Arg<number>,
+  sync?: Arg<number>,
+) => Texture;
 
 declare var hush: () => void;
 declare var render: (buffer: Buffer) => void;
@@ -161,22 +173,19 @@ declare var range: (
 
 declare var v: (
   name:
-    "boat" |
-    "bonfire" |
     "borealis" |
-    "bubbles" |
     "candles" |
     "fire" |
-    "graypaint" |
+    "fluff" |
     "greendye" |
     "highway" |
     "jellies" |
     "jelly" |
-    "lightshow" |
     "milkyway" |
     "moon" |
     "mosaic" |
     "ocean" |
+    "plants" |
     "prism" |
     "purplesmoke" |
     "redbokeh" |
@@ -185,8 +194,7 @@ declare var v: (
     "stars" |
     "taxi" |
     "tealpaint" |
-    "tree" |
-    "waterfall"
+    "tree"
 ) => string;
 
 declare var abs: Math['abs'];
