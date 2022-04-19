@@ -138,7 +138,7 @@ declare var solid: (
   b?: Arg<number>,
   a?: Arg<number>
 ) => Texture;
-declare var square: (
+declare var sq: (
   frequency?: Arg<number>,
   sync?: Arg<number>,
 ) => Texture;

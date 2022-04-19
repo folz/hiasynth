@@ -227,7 +227,7 @@ export const generatorTransforms = [
    return vec4(c, c, c, 1.0);`,
   },
   {
-    name: 'square',
+    name: 'sq',
     type: 'src',
     inputs: [
       {
