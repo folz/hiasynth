@@ -26,6 +26,7 @@ import { evalKeymap } from "./evalKeymap";
 import { saveKeymap } from "./saveKeymap";
 import { createLinter } from "./linter";
 import { tsEnvStateField } from "./typescript";
+import { formatKeymap } from "./formatKeymap";
 
 export const setup = [
   highlightActiveLineGutter(),
@@ -51,20 +52,21 @@ export const setup = [
     indentWithTab,
     evalKeymap,
     saveKeymap,
+    formatKeymap,
   ]),
   javascript(),
   EditorView.theme({
     "&": {
       backgroundColor: "transparent",
-      fontSize: "16px",
+      fontSize: "20px",
     },
     "& .cm-line": {
       maxWidth: "fit-content",
       background: "hsla(50,23%,5%,0.6)",
     },
     "&.cm-focused": {
-      outline: 'none'
-    }
+      outline: "none",
+    },
   }),
   oneDark,
   tsEnvStateField,
