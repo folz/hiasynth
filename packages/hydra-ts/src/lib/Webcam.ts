@@ -1,4 +1,4 @@
-export function Webcam(deviceId: number): Promise<HTMLVideoElement> {
+export function Webcam(deviceId?: number): Promise<HTMLVideoElement> {
   return navigator.mediaDevices
     .enumerateDevices()
     .then((devices) =>

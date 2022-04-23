@@ -1,9 +1,9 @@
-import { Decoration, DecorationSet, EditorView } from "@codemirror/view";
-import { StateEffect, StateField } from "@codemirror/state";
+import { Decoration, DecorationSet, EditorView } from '@codemirror/view';
+import { StateEffect, StateField } from '@codemirror/state';
 
 const addHighlight = StateEffect.define<{ from: number; to: number }>();
 
-const highlightMark = Decoration.mark({ class: "ent-highlight" });
+const highlightMark = Decoration.mark({ class: 'ent-highlight' });
 
 const highlightField = StateField.define<DecorationSet>({
   create() {
@@ -26,8 +26,8 @@ const highlightField = StateField.define<DecorationSet>({
 });
 
 const highlightTheme = EditorView.baseTheme({
-  ".ent-highlight": {
-    textDecoration: "underline 3px red",
+  '.ent-highlight': {
+    textDecoration: 'underline 3px red',
   },
 });
 

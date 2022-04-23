@@ -1,1 +1,1 @@
-export { HydraCanvas } from "./HydraCanvas";
+export { HydraCanvas } from './HydraCanvas';

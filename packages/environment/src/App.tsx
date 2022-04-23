@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Editor } from "editor";
-import { HydraCanvas } from "./components/HydraCanvas";
-import { useGlobalWebMidi } from "./useGlobalWebMidi";
-import { useGlobalMath } from "./useGlobalMath";
-import { useGlobalUtils } from "./useGlobalUtils";
+import React, { useEffect, useRef, useState } from 'react';
+import { Editor } from 'editor';
+import { HydraCanvas } from './components/HydraCanvas';
+import { useGlobalWebMidi } from './useGlobalWebMidi';
+import { useGlobalMath } from './useGlobalMath';
+import { useGlobalUtils } from './useGlobalUtils';
 
 export function App(): JSX.Element {
   const [dimensions, setDimensions] = useState({
@@ -34,16 +34,16 @@ export function App(): JSX.Element {
       setDimensions({ width: window.innerWidth, height: window.innerHeight });
     };
 
-    window.addEventListener("resize", listener);
+    window.addEventListener('resize', listener);
 
     return () => {
-      window.removeEventListener("resize", listener);
+      window.removeEventListener('resize', listener);
     };
   });
 
   return (
-    <div ref={rootRef} style={{ height: "100%" }}>
-      <Editor initialDoc={localStorage.getItem("ent-document") || undefined} />
+    <div ref={rootRef} style={{ height: '100%' }}>
+      <Editor initialDoc={localStorage.getItem('ent-document') || undefined} />
       <HydraCanvas {...dimensions} />
     </div>
   );

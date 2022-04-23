@@ -1,16 +1,16 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from 'react';
 
-import { EditorView } from "@codemirror/view";
-import { EditorState } from "@codemirror/state";
+import { EditorView } from '@codemirror/view';
+import { EditorState } from '@codemirror/state';
 
-import { setup } from "./setup";
+import { setup } from './setup';
 
 type EditorProps = {
   initialDoc?: string;
 };
 
 export function Editor(props: EditorProps) {
-  const { initialDoc = "" } = props;
+  const { initialDoc = '' } = props;
   const editorDomNodeRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export function Editor(props: EditorProps) {
     <div
       ref={editorDomNodeRef}
       className="Editor"
-      style={{ height: "100%", padding: "1rem" }}
+      style={{ height: '100%', padding: '1rem' }}
     />
   );
 }

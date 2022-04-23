@@ -1,9 +1,9 @@
-import { KeyBinding } from "@codemirror/view";
-import prettier from "prettier";
-import parserBabel from "prettier/parser-babel";
+import { KeyBinding } from '@codemirror/view';
+import prettier from 'prettier';
+import parserBabel from 'prettier/parser-babel';
 
 export const formatKeymap: KeyBinding = {
-  key: "Alt-f",
+  key: 'Alt-f',
   run(target) {
     const { state } = target;
 
@@ -12,7 +12,7 @@ export const formatKeymap: KeyBinding = {
 
     try {
       const { cursorOffset, formatted } = prettier.formatWithCursor(doc, {
-        parser: "babel",
+        parser: 'babel',
         plugins: [parserBabel],
         tabWidth: 2,
         useTabs: false,

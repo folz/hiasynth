@@ -14,7 +14,7 @@ interface Source {
     src: Source['src'];
     dynamic: boolean;
   }): void;
-  initCam(index: number): void;
+  initCam(index?: number): void;
   initVideo(url?: string): void;
   initImage(url?: string): void;
   initScreen(): void;

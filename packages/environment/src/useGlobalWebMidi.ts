@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import WebMidi, { Input } from "webmidi";
+import { useEffect } from 'react';
+import WebMidi, { Input } from 'webmidi';
 
 const connected = [];
 const cc = {};
@@ -19,13 +19,13 @@ function addMidiListerner(inputDevice: Input) {
   const device = WebMidi.getInputById(inputDevice.id);
   connected.push(device);
 
-  device.addListener("controlchange", "all", (e) => {
+  device.addListener('controlchange', 'all', (e) => {
     const mId = e.controller.number;
     cc[mId] = e.value / 127;
     console.log(mId, cc[mId], `(raw ${e.value})`);
   });
 
-  device.addListener("controlchange", "all", (e) => {
+  device.addListener('controlchange', 'all', (e) => {
     const mId = e.controller.number;
 
     if (mId === 43 && e.value === 127) {
@@ -65,24 +65,24 @@ export function useGlobalWebMidi() {
             addMidiListerner(input);
           });
         }
-        WebMidi.addListener("connected", (connectedDevice) => {
+        WebMidi.addListener('connected', (connectedDevice) => {
           let device = connectedDevice;
           if (connectedDevice.port) {
             device = connectedDevice.port;
           }
-          if (device.type === "input") {
+          if (device.type === 'input') {
             addMidiListerner(device);
           }
         });
 
-        WebMidi.addListener("disconnected", (disconnected) => {
+        WebMidi.addListener('disconnected', (disconnected) => {
           let device = getDeviceById(disconnected.id);
           if (disconnected.port) {
             device = getDeviceById(disconnected.port.id);
           }
           if (device) {
-            device.removeListener("noteon");
-            device.removeListener("noteoff");
+            device.removeListener('noteon');
+            device.removeListener('noteoff');
             removeDevice(disconnected.id);
           }
         });

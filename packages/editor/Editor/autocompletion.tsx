@@ -1,6 +1,6 @@
-import { autocompletion, completeFromList } from "@codemirror/autocomplete";
-import { Extension } from "@codemirror/state";
-import { tsEnvStateField } from "./typescript";
+import { autocompletion, completeFromList } from '@codemirror/autocomplete';
+import { Extension } from '@codemirror/state';
+import { tsEnvStateField } from './typescript';
 
 export function createAutocompletion(): Extension {
   return autocompletion({
@@ -10,9 +10,9 @@ export function createAutocompletion(): Extension {
         const tsEnv = state.field(tsEnvStateField);
 
         const completions = tsEnv.languageService.getCompletionsAtPosition(
-          "index.ts",
+          'index.ts',
           pos,
-          {}
+          {},
         );
 
         if (!completions) {
@@ -23,7 +23,7 @@ export function createAutocompletion(): Extension {
           completions.entries.map((c) => ({
             type: c.kind,
             label: c.name,
-          }))
+          })),
         )(ctx);
       },
     ],

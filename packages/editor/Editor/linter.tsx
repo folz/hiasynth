@@ -2,11 +2,11 @@ import {
   Diagnostic as TypeDiagnostic,
   DiagnosticCategory,
   flattenDiagnosticMessageText,
-} from "typescript";
-import { Diagnostic as LintDiagnostic, linter } from "@codemirror/lint";
-import { EditorView } from "@codemirror/view";
-import { Extension } from "@codemirror/state";
-import { tsEnvStateField } from "./typescript";
+} from 'typescript';
+import { Diagnostic as LintDiagnostic, linter } from '@codemirror/lint';
+import { EditorView } from '@codemirror/view';
+import { Extension } from '@codemirror/state';
+import { tsEnvStateField } from './typescript';
 
 export function createLinter(): Extension {
   return linter(
@@ -15,12 +15,12 @@ export function createLinter(): Extension {
       const tsEnv = state.field(tsEnvStateField);
 
       return tsEnv.languageService
-        .getSemanticDiagnostics("index.ts")
+        .getSemanticDiagnostics('index.ts')
         .map(convertToLint);
     },
     {
       delay: 400,
-    }
+    },
   );
 }
 
@@ -30,24 +30,24 @@ function convertToLint(diagnostic: TypeDiagnostic): LintDiagnostic {
     to: (diagnostic.start ?? 0) + (diagnostic.length ?? 0),
     severity: getSeverity(diagnostic.category),
     source: diagnostic.source,
-    message: flattenDiagnosticMessageText(diagnostic.messageText, "\n"),
+    message: flattenDiagnosticMessageText(diagnostic.messageText, '\n'),
   };
 }
 
 export function getSeverity(
-  category: DiagnosticCategory
-): LintDiagnostic["severity"] {
+  category: DiagnosticCategory,
+): LintDiagnostic['severity'] {
   switch (category) {
     case DiagnosticCategory.Error: {
-      return "error";
+      return 'error';
     }
     case DiagnosticCategory.Warning: {
-      return "warning";
+      return 'warning';
     }
     case DiagnosticCategory.Suggestion:
     case DiagnosticCategory.Message:
     default: {
-      return "info";
+      return 'info';
     }
   }
 }
