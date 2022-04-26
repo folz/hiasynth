@@ -10,7 +10,7 @@ export function Webcam(deviceId?: number): Promise<HTMLVideoElement> {
         video: true,
       };
 
-      if (cameras[deviceId]) {
+      if (deviceId && cameras[deviceId]) {
         constraints['video'] = {
           deviceId: {
             exact: cameras[deviceId].deviceId,

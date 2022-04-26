@@ -3,6 +3,7 @@
 // to do: transform time rather than array values, similar to working with coordinates in hydra
 
 import easing from './easing-functions';
+import { Synth } from '../Hydra';
 
 const map = (
   num: number,
@@ -73,7 +74,7 @@ export default {
 
   getValue:
     (arr: any[] = []) =>
-    ({ time, bpm }: any) => {
+    ({ time, bpm }: Synth) => {
       const speed = arr._speed ? arr._speed : 1;
       const smooth = arr._smooth ? arr._smooth : 0;
       const index = time * speed * (bpm / 60) + (arr._offset || 0);
