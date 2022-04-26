@@ -185,6 +185,9 @@ declare var v: (
     "moon" |
     "mosaic" |
     "ocean" |
+    "phil1" |
+    "phil2" |
+    "phil3" |
     "plants" |
     "prism" |
     "purplesmoke" |
@@ -240,4 +243,6 @@ declare var LOG2E: Math['LOG2E'];
 declare var PI: Math['PI'];
 declare var SQRT1_2: Math['SQRT1_2'];
 declare var SQRT2: Math['SQRT2'];
+
+declare var window: any;
 `;
