@@ -1,4 +1,5 @@
-import { Hydra, HydraRendererOptions } from './Hydra';
+import { createHydra } from './Hydra';
+import type { Hydra, HydraRendererOptions } from './Hydra';
 import { solid } from './glsl';
 import { Output } from './Output';
 
@@ -54,17 +55,17 @@ export interface HydraEnv {
   hydra: Hydra;
   hush: () => void;
   setResolution: (width: number, height: number) => void;
-  render: () => void;
+  render: (output?: Output) => void;
   tick: (dt: number) => void;
 }
 
 export function createHydraEnv(options: HydraRendererOptions): HydraEnv {
-  const hydra = new Hydra(options);
+  const hydra = createHydra(options);
 
   return {
     hydra,
     hush: () => hush.apply(undefined, [hydra]),
-    render: () => render.apply(undefined, [hydra]),
+    render: (output?: Output) => render.apply(undefined, [hydra, output]),
     setResolution: (width: number, height: number) =>
       setResolution.apply(undefined, [hydra, width, height]),
     tick: (dt: number) => tick.apply(undefined, [hydra, dt]),

@@ -53,53 +53,56 @@ export interface HydraRendererOptions {
   width: number;
 }
 
-export class Hydra {
+export interface Hydra {
   readonly synth: Synth;
   readonly outputs: Output[];
   readonly sources: Source[];
   output: Output;
   readonly renderFbo: DrawCommand<DefaultContext>;
-  timeSinceLastUpdate = 0;
+  timeSinceLastUpdate: number;
+}
 
-  constructor({
+export function createHydra(options: HydraRendererOptions): Hydra {
+  const {
     height,
     numOutputs = 4,
     numSources = 4,
     precision = 'mediump',
     regl,
     width,
-  }: HydraRendererOptions) {
-    const outputs = [];
-    const sources = [];
+  } = options;
 
-    const synth = {
-      bpm: 60,
-      fps: undefined,
-      resolution: [width, height],
-      speed: 1,
-      stats: {
-        fps: 0,
-      },
-      time: 0,
-    } as const;
+  const outputs = [];
+  const sources = [];
 
-    const defaultUniforms = {
-      time: regl.prop<HydraDrawUniforms, keyof HydraDrawUniforms>('time'),
-      resolution: regl.prop<HydraDrawUniforms, keyof HydraDrawUniforms>(
-        'resolution',
-      ),
-    };
+  const synth = {
+    bpm: 60,
+    fps: undefined,
+    resolution: [width, height],
+    speed: 1,
+    stats: {
+      fps: 0,
+    },
+    time: 0,
+  } as const;
 
-    const glEnvironment = {
-      regl,
-      width,
-      height,
-      precision,
-      defaultUniforms,
-    };
+  const defaultUniforms = {
+    time: regl.prop<HydraDrawUniforms, keyof HydraDrawUniforms>('time'),
+    resolution: regl.prop<HydraDrawUniforms, keyof HydraDrawUniforms>(
+      'resolution',
+    ),
+  };
 
-    const renderFbo = regl<HydraFboUniforms>({
-      frag: `
+  const glEnvironment = {
+    regl,
+    width,
+    height,
+    precision,
+    defaultUniforms,
+  };
+
+  const renderFbo = regl<HydraFboUniforms>({
+    frag: `
       precision ${glEnvironment.precision} float;
       varying vec2 uv;
       uniform vec2 resolution;
@@ -109,7 +112,7 @@ export class Hydra {
         gl_FragColor = texture2D(tex0, vec2(1.0 - uv.x, uv.y));
       }
       `,
-      vert: `
+    vert: `
       precision ${glEnvironment.precision} float;
       attribute vec2 position;
       varying vec2 uv;
@@ -118,37 +121,39 @@ export class Hydra {
         uv = position;
         gl_Position = vec4(1.0 - 2.0 * position, 0, 1);
       }`,
-      attributes: {
-        position: [
-          [-2, 0],
-          [0, -2],
-          [2, 2],
-        ],
-      },
-      uniforms: {
-        tex0: regl.prop<HydraFboUniforms, keyof HydraFboUniforms>('tex0'),
-        resolution: regl.prop<HydraFboUniforms, keyof HydraFboUniforms>(
-          'resolution',
-        ),
-      },
-      count: 3,
-      depth: { enable: false },
-    });
+    attributes: {
+      position: [
+        [-2, 0],
+        [0, -2],
+        [2, 2],
+      ],
+    },
+    uniforms: {
+      tex0: regl.prop<HydraFboUniforms, keyof HydraFboUniforms>('tex0'),
+      resolution: regl.prop<HydraFboUniforms, keyof HydraFboUniforms>(
+        'resolution',
+      ),
+    },
+    count: 3,
+    depth: { enable: false },
+  });
 
-    for (let i = 0; i < numSources; i++) {
-      const s = new Source(glEnvironment);
-      sources.push(s);
-    }
-
-    for (let i = 0; i < numOutputs; i++) {
-      const o = new Output(glEnvironment);
-      outputs.push(o);
-    }
-
-    this.outputs = outputs;
-    this.sources = sources;
-    this.synth = synth;
-    this.output = outputs[0];
-    this.renderFbo = renderFbo;
+  for (let i = 0; i < numSources; i++) {
+    const s = new Source(glEnvironment);
+    sources.push(s);
   }
+
+  for (let i = 0; i < numOutputs; i++) {
+    const o = new Output(glEnvironment);
+    outputs.push(o);
+  }
+
+  return {
+    outputs,
+    sources,
+    synth,
+    output: outputs[0],
+    renderFbo,
+    timeSinceLastUpdate: 0,
+  };
 }
