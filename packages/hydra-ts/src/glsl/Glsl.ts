@@ -1,5 +1,4 @@
 import { Output } from '../Output';
-import ImmutableList from './ImmutableList';
 import { ProcessedTransformDefinition } from './transformDefinitions';
 
 export interface TransformApplication {
@@ -8,13 +7,13 @@ export interface TransformApplication {
 }
 
 export class Glsl {
-  transforms: ImmutableList<TransformApplication>;
+  transforms: TransformApplication[];
 
-  constructor(transforms: ImmutableList<TransformApplication>) {
+  constructor(transforms: TransformApplication[]) {
     this.transforms = transforms;
   }
 
   out(output: Output) {
-    output.render(this.transforms.toArray());
+    output.render(this.transforms);
   }
 }

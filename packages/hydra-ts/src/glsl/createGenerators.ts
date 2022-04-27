@@ -4,7 +4,6 @@ import {
   TransformDefinitionType,
 } from './transformDefinitions.js';
 import { Glsl } from './Glsl';
-import ImmutableList from './ImmutableList.js';
 
 type Generator = (...args: unknown[]) => Glsl;
 
@@ -29,12 +28,12 @@ export function createGenerator(
   const processed = processGlsl(generatorTransform);
 
   return (...args: unknown[]) =>
-    new TransformChainClass(
-      new ImmutableList({
+    new TransformChainClass([
+      {
         transform: processed,
         userArgs: args,
-      }),
-    );
+      },
+    ]);
 }
 
 export function createGenerators(
@@ -63,7 +62,7 @@ export function addTransformChainMethod(
       userArgs: args,
     };
 
-    return new cls(this.transforms.append(transform));
+    return new cls([...this.transforms, transform]);
   }
 
   // @ts-ignore
