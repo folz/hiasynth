@@ -1,6 +1,6 @@
 import { Attributes, DrawCommand, Framebuffer2D } from 'regl';
 import { TransformApplication } from './glsl/Glsl';
-import { compileWithEnvironment } from './compiler/compileWithEnvironment';
+import { compileWithSynth } from './compiler/compileWithSynth';
 import { Synth } from './Hydra';
 
 export class Output {
@@ -73,7 +73,7 @@ export class Output {
       return;
     }
 
-    const pass = compileWithEnvironment(transformApplications, this.synth);
+    const pass = compileWithSynth(transformApplications, this.synth);
 
     this.draw = this.synth.environment.regl({
       frag: pass.frag,

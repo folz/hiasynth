@@ -25,7 +25,7 @@ export interface ShaderParams {
   fragColor: string;
 }
 
-export function compileWithEnvironment(
+export function compileWithSynth(
   transformApplications: TransformApplication[],
   synth: Synth,
 ): CompiledTransform {
