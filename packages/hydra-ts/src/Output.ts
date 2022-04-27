@@ -53,8 +53,6 @@ export class Output {
   }
 
   resize(width: number, height: number) {
-    this.synth.environment.resolution = [width, height];
-
     this.fbos.forEach((fbo) => {
       fbo.resize(width, height);
     });

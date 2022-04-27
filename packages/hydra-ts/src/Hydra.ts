@@ -37,7 +37,6 @@ export interface Synth {
       [name: string]: DynamicVariable<any> | DynamicVariableFn<any, any, any>;
     };
     regl: Regl;
-    resolution: readonly [number, number];
   };
 }
 
@@ -92,7 +91,6 @@ export function createHydra(options: HydraRendererOptions): Hydra {
     environment: {
       regl,
       defaultUniforms,
-      resolution: [width, height],
     },
   } as const;
 
