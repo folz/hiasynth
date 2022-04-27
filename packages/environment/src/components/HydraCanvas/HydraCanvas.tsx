@@ -1,18 +1,19 @@
-import React, { forwardRef, useEffect, useRef, useState } from "react";
-import REGL, { Regl } from "regl";
-import { Hydra, generators } from "hydra-ts";
-import ArrayUtils from "hydra-ts/src/lib/array-utils";
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import REGL, { Regl } from 'regl';
+import { createHydraEnv, generators, Loop } from 'hydra-ts';
+import type { HydraEnv } from 'hydra-ts';
+import ArrayUtils from 'hydra-ts/src/lib/array-utils';
 
 const style = {
-  imageRendering: "pixelated",
-  position: "absolute",
+  imageRendering: 'pixelated',
+  position: 'absolute',
   top: 0,
   right: 0,
   bottom: 0,
   left: 0,
   inset: 0,
   zIndex: -1,
-  backgroundColor: "#000000",
+  backgroundColor: '#000000',
 } as const;
 
 type HydraCanvasProps = {
@@ -26,7 +27,7 @@ window.range = function range(
   toStart: number = 0,
   toEnd: number = 1,
   fromStart: number = 0,
-  fromEnd: number = 1
+  fromEnd: number = 1,
 ) {
   return (
     toStart + ((value - fromStart) * (toEnd - toStart)) / (fromEnd - fromStart)
@@ -38,7 +39,7 @@ export const HydraCanvas = forwardRef<HTMLCanvasElement, HydraCanvasProps>(
     const { height, width } = props;
 
     const reglRef = useRef<Regl>();
-    const hydraRef = useRef<Hydra>();
+    const hydraEnvRef = useRef<HydraEnv>();
     const [isReglLoaded, setIsReglLoaded] = useState(false);
 
     useGlobalHydraGenerators();
@@ -46,7 +47,7 @@ export const HydraCanvas = forwardRef<HTMLCanvasElement, HydraCanvasProps>(
     useEffect(() => {
       requestAnimationFrame(() => {
         reglRef.current = REGL({
-          canvas: "#hydra-canvas",
+          canvas: '#hydra-canvas',
           pixelRatio: 1,
         });
         setIsReglLoaded(true);
@@ -54,44 +55,49 @@ export const HydraCanvas = forwardRef<HTMLCanvasElement, HydraCanvasProps>(
     }, []);
 
     useEffect(() => {
-      if (!isReglLoaded || !reglRef.current || hydraRef.current) {
+      if (!isReglLoaded || !reglRef.current || hydraEnvRef.current) {
         return;
       }
 
+      // TODO remove
       ArrayUtils.init();
 
-      const renderer = new Hydra({
+      const hydraEnv = createHydraEnv({
         width,
         height,
         regl: reglRef.current,
-        precision: "mediump",
+        precision: 'mediump',
       });
 
-      renderer.loop.start();
+      // TODO capture a ref to loop
+      const loop = new Loop(hydraEnv.tick);
+      loop.start();
 
-      const { sources, outputs, render, hush, synth } = renderer;
+      const { hydra, render, hush, setResolution } = hydraEnv;
+      const { sources, outputs, synth } = hydra;
       const [s0, s1, s2, s3] = sources;
       const [o0, o1, o2, o3] = outputs;
 
-      window["render"] = render;
-      window["hush"] = hush;
-      window["synth"] = synth;
+      window['render'] = render;
+      window['hush'] = hush;
+      window['synth'] = synth;
+      window['setResolution'] = setResolution;
 
-      window["s0"] = s0;
-      window["s1"] = s1;
-      window["s2"] = s2;
-      window["s3"] = s3;
+      window['s0'] = s0;
+      window['s1'] = s1;
+      window['s2'] = s2;
+      window['s3'] = s3;
 
-      window["o0"] = o0;
-      window["o1"] = o1;
-      window["o2"] = o2;
-      window["o3"] = o3;
+      window['o0'] = o0;
+      window['o1'] = o1;
+      window['o2'] = o2;
+      window['o3'] = o3;
 
-      hydraRef.current = renderer;
+      hydraEnvRef.current = hydraEnv;
     }, [isReglLoaded]);
 
     useEffect(() => {
-      hydraRef.current?.setResolution(width, height);
+      hydraEnvRef.current?.setResolution(width, height);
     }, [width, height]);
 
     return (
@@ -103,7 +109,7 @@ export const HydraCanvas = forwardRef<HTMLCanvasElement, HydraCanvasProps>(
         style={style}
       />
     );
-  }
+  },
 );
 
 function useGlobalHydraGenerators() {

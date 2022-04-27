@@ -1,4 +1,7 @@
+export { createHydraEnv } from './src/createHydraEnv';
+export type { HydraEnv } from './src/createHydraEnv';
 export { Hydra } from './src/Hydra';
+export { Loop } from './src/Loop';
 export { Source } from './src/Source';
 export { Output } from './src/Output';
 export * as generators from './src/glsl';
