@@ -12,7 +12,7 @@ export function range(
   );
 }
 
-export function v(path) {
+export function v(path: any) {
   return `/v/${path}.mp4`;
 }
 
@@ -20,6 +20,7 @@ export function useGlobalUtils(): void {
   useEffect(() => {
     // @ts-ignore
     window.range = range;
+    // @ts-ignore
     window.v = v;
   }, []);
 }

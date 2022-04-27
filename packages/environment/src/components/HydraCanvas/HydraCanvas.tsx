@@ -21,7 +21,8 @@ type HydraCanvasProps = {
   height: number;
 };
 
-// TODO
+// TODO make removable like other hooks
+// @ts-ignore
 window.range = function range(
   value: number = 0,
   toStart: number = 0,
@@ -78,19 +79,31 @@ export const HydraCanvas = forwardRef<HTMLCanvasElement, HydraCanvasProps>(
       const [s0, s1, s2, s3] = sources;
       const [o0, o1, o2, o3] = outputs;
 
+      // @ts-ignore
       window['render'] = render;
+      // @ts-ignore
       window['hush'] = hush;
+      // @ts-ignore
       window['synth'] = synth;
+      // @ts-ignore
       window['setResolution'] = setResolution;
 
+      // @ts-ignore
       window['s0'] = s0;
+      // @ts-ignore
       window['s1'] = s1;
+      // @ts-ignore
       window['s2'] = s2;
+      // @ts-ignore
       window['s3'] = s3;
 
+      // @ts-ignore
       window['o0'] = o0;
+      // @ts-ignore
       window['o1'] = o1;
+      // @ts-ignore
       window['o2'] = o2;
+      // @ts-ignore
       window['o3'] = o3;
 
       hydraEnvRef.current = hydraEnv;
@@ -113,5 +126,6 @@ export const HydraCanvas = forwardRef<HTMLCanvasElement, HydraCanvasProps>(
 );
 
 function useGlobalHydraGenerators() {
+  // @ts-ignore
   Object.keys(generators).forEach((name) => (window[name] = generators[name]));
 }

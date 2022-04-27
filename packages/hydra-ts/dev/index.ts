@@ -36,10 +36,13 @@ const [o0, o1, o2, o3] = outputs;
 const { src, osc, gradient, shape, voronoi, noise } = generators;
 
 osc(() => 4 * Math.PI)
+  // @ts-ignore
   .add(o0, [0, 0.5].smooth())
+  // @ts-ignore
   .mult(src(o0).rotate(Math.PI / 2), 0.6)
   .out(o0);
 
+// @ts-ignore
 src(o0).scrollX(0.1, -0.1).scrollY(0.1, -0.1).out(o1);
 
 render(o1);
