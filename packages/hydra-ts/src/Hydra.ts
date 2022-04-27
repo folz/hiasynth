@@ -8,8 +8,7 @@ import {
 } from 'regl';
 import { Output } from './Output';
 import { Source } from './Source';
-
-export type Precision = 'lowp' | 'mediump' | 'highp';
+import { Precision } from './types';
 
 export type Resolution = readonly [number, number];
 
@@ -24,6 +23,7 @@ export interface HydraDrawUniforms {
 }
 
 export interface Synth {
+  precision: Precision;
   bpm: number;
   fps?: number;
   resolution: Resolution;
@@ -32,16 +32,13 @@ export interface Synth {
     fps: number;
   };
   time: number;
-}
-
-export interface GlEnvironment {
-  defaultUniforms: {
-    [name: string]: DynamicVariable<any> | DynamicVariableFn<any, any, any>;
+  environment: {
+    defaultUniforms: {
+      [name: string]: DynamicVariable<any> | DynamicVariableFn<any, any, any>;
+    };
+    regl: Regl;
+    resolution: readonly [number, number];
   };
-  height: number;
-  precision: Precision;
-  regl: Regl;
-  width: number;
 }
 
 export interface HydraRendererOptions {
@@ -75,7 +72,15 @@ export function createHydra(options: HydraRendererOptions): Hydra {
   const outputs = [];
   const sources = [];
 
+  const defaultUniforms = {
+    time: regl.prop<HydraDrawUniforms, keyof HydraDrawUniforms>('time'),
+    resolution: regl.prop<HydraDrawUniforms, keyof HydraDrawUniforms>(
+      'resolution',
+    ),
+  };
+
   const synth = {
+    precision,
     bpm: 60,
     fps: undefined,
     resolution: [width, height],
@@ -84,26 +89,16 @@ export function createHydra(options: HydraRendererOptions): Hydra {
       fps: 0,
     },
     time: 0,
+    environment: {
+      regl,
+      defaultUniforms,
+      resolution: [width, height],
+    },
   } as const;
-
-  const defaultUniforms = {
-    time: regl.prop<HydraDrawUniforms, keyof HydraDrawUniforms>('time'),
-    resolution: regl.prop<HydraDrawUniforms, keyof HydraDrawUniforms>(
-      'resolution',
-    ),
-  };
-
-  const glEnvironment = {
-    regl,
-    width,
-    height,
-    precision,
-    defaultUniforms,
-  };
 
   const renderFbo = regl<HydraFboUniforms>({
     frag: `
-      precision ${glEnvironment.precision} float;
+      precision ${synth.precision} float;
       varying vec2 uv;
       uniform vec2 resolution;
       uniform sampler2D tex0;
@@ -113,7 +108,7 @@ export function createHydra(options: HydraRendererOptions): Hydra {
       }
       `,
     vert: `
-      precision ${glEnvironment.precision} float;
+      precision ${synth.precision} float;
       attribute vec2 position;
       varying vec2 uv;
 
@@ -139,12 +134,12 @@ export function createHydra(options: HydraRendererOptions): Hydra {
   });
 
   for (let i = 0; i < numSources; i++) {
-    const s = new Source(glEnvironment);
+    const s = new Source(synth);
     sources.push(s);
   }
 
   for (let i = 0; i < numOutputs; i++) {
-    const o = new Output(glEnvironment);
+    const o = new Output(synth);
     outputs.push(o);
   }
 

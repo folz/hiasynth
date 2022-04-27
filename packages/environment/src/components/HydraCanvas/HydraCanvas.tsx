@@ -73,6 +73,10 @@ export const HydraCanvas = forwardRef<HTMLCanvasElement, HydraCanvasProps>(
       // TODO capture a ref to loop
       const loop = new Loop(hydraEnv.tick);
       loop.start();
+      // @ts-ignore
+      window.loop = loop;
+      // @ts-ignore
+      window.hydraEnv = hydraEnv;
 
       const { hydra, render, hush, setResolution } = hydraEnv;
       const { sources, outputs, synth } = hydra;

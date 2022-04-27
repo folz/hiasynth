@@ -1,19 +1,19 @@
 import { Webcam } from './lib/Webcam';
 import { Screen } from './lib/Screen';
 import { Texture2D, TextureImageData } from 'regl';
-import { GlEnvironment, Synth } from './Hydra';
+import { Synth } from './Hydra';
 
 export class Source {
-  environment: GlEnvironment;
+  synth: Synth;
   src?: TextureImageData;
   dynamic: boolean;
   tex: Texture2D;
 
-  constructor(environment: GlEnvironment) {
-    this.environment = environment;
+  constructor(synth: Synth) {
+    this.synth = synth;
     this.src = undefined;
     this.dynamic = true;
-    this.tex = environment.regl.texture({
+    this.tex = synth.environment.regl.texture({
       shape: [1, 1],
     });
   }
@@ -21,7 +21,7 @@ export class Source {
   init = (opts: { src: Source['src']; dynamic: boolean }) => {
     if (opts.src) {
       this.src = opts.src;
-      this.tex = this.environment.regl.texture(this.src);
+      this.tex = this.synth.environment.regl.texture(this.src);
     }
 
     if (opts.dynamic) {
@@ -34,7 +34,7 @@ export class Source {
       .then((video) => {
         this.src = video;
         this.dynamic = true;
-        this.tex = this.environment.regl.texture(video);
+        this.tex = this.synth.environment.regl.texture(video);
       })
       .catch((err) => console.log('could not get camera', err));
   };
@@ -49,7 +49,7 @@ export class Source {
     vid.addEventListener('loadeddata', () => {
       this.src = vid;
       vid.play();
-      this.tex = this.environment.regl.texture(this.src);
+      this.tex = this.synth.environment.regl.texture(this.src);
       this.dynamic = true;
     });
     vid.src = url;
@@ -62,7 +62,7 @@ export class Source {
     img.onload = () => {
       this.src = img;
       this.dynamic = false;
-      this.tex = this.environment.regl.texture(this.src);
+      this.tex = this.synth.environment.regl.texture(this.src);
     };
   };
 
@@ -70,7 +70,7 @@ export class Source {
     Screen()
       .then((video) => {
         this.src = video;
-        this.tex = this.environment.regl.texture(this.src);
+        this.tex = this.synth.environment.regl.texture(this.src);
         this.dynamic = true;
       })
       .catch((err) => console.log('could not get screen', err));
@@ -85,7 +85,7 @@ export class Source {
       }
     }
     this.src = undefined;
-    this.tex = this.environment.regl.texture({ shape: [1, 1] });
+    this.tex = this.synth.environment.regl.texture({ shape: [1, 1] });
   };
 
   draw = (_props: Synth) => {

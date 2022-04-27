@@ -1,9 +1,9 @@
-import { GlEnvironment } from '../Hydra';
 import { TypedArg } from './formatArguments';
 import { utilityFunctions } from '../glsl/utilityFunctions';
 import { TransformApplication } from '../glsl/Glsl';
 import { DynamicVariable, DynamicVariableFn, Texture2D, Uniform } from 'regl';
 import { generateGlsl } from './generateGlsl';
+import { Synth } from '../Hydra';
 
 export type CompiledTransform = {
   frag: string;
@@ -27,7 +27,7 @@ export interface ShaderParams {
 
 export function compileWithEnvironment(
   transformApplications: TransformApplication[],
-  environment: GlEnvironment,
+  synth: Synth,
 ): CompiledTransform {
   const shaderParams = compileGlsl(transformApplications);
 
@@ -37,7 +37,7 @@ export function compileWithEnvironment(
   });
 
   const frag = `
-  precision ${environment.precision} float;
+  precision ${synth.precision} float;
   
   #define PI 3.1415926538
 
@@ -76,7 +76,7 @@ export function compileWithEnvironment(
 
   return {
     frag: frag,
-    uniforms: { ...environment.defaultUniforms, ...uniforms },
+    uniforms: { ...synth.environment.defaultUniforms, ...uniforms },
   };
 }
 

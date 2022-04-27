@@ -1,25 +1,25 @@
 import { Attributes, DrawCommand, Framebuffer2D } from 'regl';
-import { GlEnvironment } from './Hydra';
 import { TransformApplication } from './glsl/Glsl';
 import { compileWithEnvironment } from './compiler/compileWithEnvironment';
+import { Synth } from './Hydra';
 
 export class Output {
   attributes: Attributes;
   draw: DrawCommand;
   fbos: Framebuffer2D[];
-  environment: GlEnvironment;
+  synth: Synth;
   vert: string;
   pingPongIndex = 0;
 
-  constructor(environment: GlEnvironment) {
-    this.environment = environment;
+  constructor(synth: Synth) {
+    this.synth = synth;
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     this.draw = () => {};
 
     this.vert = `
-  precision ${environment.precision} float;
+  precision ${synth.precision} float;
   attribute vec2 position;
   varying vec2 uv;
 
@@ -29,7 +29,7 @@ export class Output {
   }`;
 
     this.attributes = {
-      position: environment.regl.buffer([
+      position: synth.environment.regl.buffer([
         [-2, 0],
         [0, -2],
         [2, 2],
@@ -40,11 +40,11 @@ export class Output {
     this.fbos = Array(2)
       .fill(undefined)
       .map(() =>
-        environment.regl.framebuffer({
-          color: environment.regl.texture({
+        synth.environment.regl.framebuffer({
+          color: synth.environment.regl.texture({
             mag: 'nearest',
-            width: environment.width,
-            height: environment.height,
+            width: synth.resolution[0],
+            height: synth.resolution[1],
             format: 'rgba',
           }),
           depthStencil: false,
@@ -53,6 +53,8 @@ export class Output {
   }
 
   resize(width: number, height: number) {
+    this.synth.environment.resolution = [width, height];
+
     this.fbos.forEach((fbo) => {
       fbo.resize(width, height);
     });
@@ -73,12 +75,9 @@ export class Output {
       return;
     }
 
-    const pass = compileWithEnvironment(
-      transformApplications,
-      this.environment,
-    );
+    const pass = compileWithEnvironment(transformApplications, this.synth);
 
-    this.draw = this.environment.regl({
+    this.draw = this.synth.environment.regl({
       frag: pass.frag,
       vert: this.vert,
       attributes: this.attributes,
