@@ -46,7 +46,13 @@ export function generateGlsl(
     });
 
     // add new glsl function to running list of functions
-    if (!contains(transformApplication, shaderParams.transformApplications)) {
+    const isNewTransform = shaderParams.transformApplications.every(
+      (paramTransformApplication) =>
+        transformApplication.transform.name !==
+        paramTransformApplication.transform.name,
+    );
+
+    if (isNewTransform) {
       shaderParams.transformApplications.push(transformApplication);
     }
 
@@ -132,21 +138,6 @@ function shaderString(
     .reduce((p, c) => `${p}, ${c}`, '');
 
   return `${transformApplication.transform.name}(${uv}${str})`;
-}
-
-function contains(
-  transformApplication: TransformApplication,
-  transformApplications: TransformApplication[],
-): boolean {
-  for (let i = 0; i < transformApplications.length; i++) {
-    if (
-      transformApplication.transform.name ==
-      transformApplications[i].transform.name
-    ) {
-      return true;
-    }
-  }
-  return false;
 }
 
 export function formatArguments(
