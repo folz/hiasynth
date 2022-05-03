@@ -1,4 +1,5 @@
 import { ProcessedTransformDefinition } from './transformDefinitions';
+import { Output } from '../Output';
 
 export interface TransformApplication {
   transform: ProcessedTransformDefinition;
@@ -10,5 +11,9 @@ export class Glsl {
 
   constructor(transforms: TransformApplication[]) {
     this.transforms = transforms;
+  }
+
+  out(output: Output) {
+    output.render(this.transforms)
   }
 }
