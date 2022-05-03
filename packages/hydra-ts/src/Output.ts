@@ -8,7 +8,6 @@ export class Output {
   draw: DrawCommand;
   fbos: Framebuffer2D[];
   synth: Synth;
-  vert: string;
   pingPongIndex = 0;
 
   constructor(synth: Synth) {
@@ -17,16 +16,6 @@ export class Output {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     this.draw = () => {};
-
-    this.vert = `
-  precision ${synth.precision} float;
-  attribute vec2 position;
-  varying vec2 uv;
-
-  void main () {
-    uv = position;
-    gl_Position = vec4(2.0 * position - 1.0, 0, 1);
-  }`;
 
     this.attributes = {
       position: synth.environment.regl.buffer([
@@ -77,7 +66,7 @@ export class Output {
 
     this.draw = this.synth.environment.regl({
       frag: pass.frag,
-      vert: this.vert,
+      vert: pass.vert,
       attributes: this.attributes,
       uniforms: pass.uniforms,
       count: 3,
