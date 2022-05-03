@@ -22,11 +22,15 @@ export function compileWithSynth(
   transformApplications: TransformApplication[],
   synth: Synth,
 ): CompiledTransform {
-  const shaderParams = compileGlsl(transformApplications);
+  const {
+    fragColor,
+    transformApplications: compiledTransformApplications,
+    uniforms,
+  } = compileGlsl(transformApplications);
 
-  const uniforms: Record<TypedArg['name'], TypedArg['value']> = {};
-  shaderParams.uniforms.forEach((uniform) => {
-    uniforms[uniform.name] = uniform.value;
+  const uniformMap: Record<TypedArg['name'], TypedArg['value']> = {};
+  uniforms.forEach((uniform) => {
+    uniformMap[uniform.name] = uniform.value;
   });
 
   const frag = `
@@ -34,7 +38,7 @@ export function compileWithSynth(
   
   #define PI 3.1415926538
 
-  ${Object.values(shaderParams.uniforms)
+  ${uniforms
     .map((uniform) => {
       return `
       uniform ${uniform.type} ${uniform.name};`;
@@ -52,7 +56,7 @@ export function compileWithSynth(
     })
     .join('')}
 
-  ${shaderParams.transformApplications
+  ${compiledTransformApplications
     .map((transformApplication) => {
       return `
             ${transformApplication.transform.glsl}
@@ -63,33 +67,29 @@ export function compileWithSynth(
   void main () {
     vec4 c = vec4(1, 0, 0, 1);
     vec2 st = gl_FragCoord.xy/resolution.xy;
-    gl_FragColor = ${shaderParams.fragColor};
+    gl_FragColor = ${fragColor};
   }
   `;
 
   return {
     frag: frag,
-    uniforms: { ...synth.environment.defaultUniforms, ...uniforms },
+    uniforms: { ...synth.environment.defaultUniforms, ...uniformMap },
   };
 }
 
 export function compileGlsl(transformApplications: TransformApplication[]) {
-  const newUniforms: TypedArg[] = [];
+  const uniforms: TypedArg[] = [];
   const newTransformApplications: TransformApplication[] = [];
 
   // Note: generateGlsl() also mutates newTransformApplications
   const fragColor = generateGlsl(
     transformApplications,
-    newUniforms,
+    uniforms,
     newTransformApplications,
   )('st');
 
-  // remove uniforms with duplicate names
-  const uniforms: Record<TypedArg['name'], TypedArg> = {};
-  newUniforms.forEach((uniform) => (uniforms[uniform.name] = uniform));
-
   return {
-    uniforms: Object.values(uniforms),
+    uniforms,
     fragColor,
     transformApplications: newTransformApplications,
   };
