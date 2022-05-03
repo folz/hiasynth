@@ -14,6 +14,6 @@ export class Glsl {
   }
 
   out(output: Output) {
-    output.render(this.transforms)
+    output.render(this.transforms);
   }
 }

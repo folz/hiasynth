@@ -19,7 +19,8 @@ export function setResolution(
   width: number,
   height: number,
 ): void {
-  hydra.synth.resolution = [width, height];
+  hydra.synth.resolution[0] = width;
+  hydra.synth.resolution[1] = height;
 
   hydra.outputs.forEach((output) => {
     output.resize(hydra.synth);

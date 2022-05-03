@@ -1,11 +1,4 @@
-import {
-  DefaultContext,
-  DrawCommand,
-  DynamicVariable,
-  DynamicVariableFn,
-  Regl,
-  Resource,
-} from 'regl';
+import REGL from 'regl';
 import { Output } from './Output';
 import { Source } from './Source';
 import { Precision } from './types';
@@ -14,7 +7,7 @@ export type Resolution = readonly [number, number];
 
 export interface HydraFboUniforms {
   resolution: Resolution;
-  tex0: Resource;
+  tex0: REGL.Resource;
 }
 
 export interface HydraDrawUniforms {
@@ -26,17 +19,20 @@ export interface Synth {
   precision: Precision;
   bpm: number;
   fps?: number;
-  resolution: Resolution;
+  readonly resolution: Resolution;
   speed: number;
-  stats: {
+  readonly stats: {
     fps: number;
   };
   time: number;
-  environment: {
+  readonly environment: {
     defaultUniforms: {
-      [name: string]: DynamicVariable<any> | DynamicVariableFn<any, any, any>;
+      time: REGL.DynamicVariable<HydraDrawUniforms[keyof HydraDrawUniforms]>;
+      resolution: REGL.DynamicVariable<
+        HydraDrawUniforms[keyof HydraDrawUniforms]
+      >;
     };
-    regl: Regl;
+    regl: REGL.Regl;
   };
 }
 
@@ -45,7 +41,7 @@ export interface HydraRendererOptions {
   numOutputs?: number;
   numSources?: number;
   precision?: Precision;
-  regl: Regl;
+  regl: REGL.Regl;
   width: number;
 }
 
@@ -54,7 +50,7 @@ export interface Hydra {
   readonly outputs: Output[];
   readonly sources: Source[];
   output: Output;
-  readonly renderFbo: DrawCommand<DefaultContext>;
+  renderFbo: REGL.DrawCommand<REGL.DefaultContext, {}>;
   timeSinceLastUpdate: number;
 }
 
@@ -63,20 +59,13 @@ export function createHydra(options: HydraRendererOptions): Hydra {
     height,
     numOutputs = 4,
     numSources = 4,
-    precision = 'mediump',
+    precision = 'mediump' as const,
     regl,
     width,
   } = options;
 
-  const outputs = [];
-  const sources = [];
-
-  const defaultUniforms = {
-    time: regl.prop<HydraDrawUniforms, keyof HydraDrawUniforms>('time'),
-    resolution: regl.prop<HydraDrawUniforms, keyof HydraDrawUniforms>(
-      'resolution',
-    ),
-  };
+  const outputs: Output[] = [];
+  const sources: Source[] = [];
 
   const synth = {
     precision,
@@ -90,7 +79,12 @@ export function createHydra(options: HydraRendererOptions): Hydra {
     time: 0,
     environment: {
       regl,
-      defaultUniforms,
+      defaultUniforms: {
+        time: regl.prop<HydraDrawUniforms, keyof HydraDrawUniforms>('time'),
+        resolution: regl.prop<HydraDrawUniforms, keyof HydraDrawUniforms>(
+          'resolution',
+        ),
+      },
     },
   } as const;
 
