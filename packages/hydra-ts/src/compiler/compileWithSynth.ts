@@ -18,12 +18,6 @@ export type CompiledTransform = {
   };
 };
 
-export interface ShaderParams {
-  uniforms: TypedArg[];
-  transformApplications: TransformApplication[];
-  fragColor: string;
-}
-
 export function compileWithSynth(
   transformApplications: TransformApplication[],
   synth: Synth,
@@ -79,27 +73,24 @@ export function compileWithSynth(
   };
 }
 
-export function compileGlsl(
-  transformApplications: TransformApplication[],
-): ShaderParams {
-  const shaderParams: ShaderParams = {
-    uniforms: [],
-    transformApplications: [],
-    fragColor: '',
-  };
+export function compileGlsl(transformApplications: TransformApplication[]) {
+  const newUniforms: TypedArg[] = [];
+  const newTransformApplications: TransformApplication[] = [];
 
-  // Note: generateGlsl() also mutates shaderParams.transformApplications
-  shaderParams.fragColor = generateGlsl(
+  // Note: generateGlsl() also mutates newTransformApplications
+  const fragColor = generateGlsl(
     transformApplications,
-    shaderParams,
+    newUniforms,
+    newTransformApplications,
   )('st');
 
   // remove uniforms with duplicate names
-  const uniforms: Record<string, TypedArg> = {};
-  shaderParams.uniforms.forEach(
-    (uniform) => (uniforms[uniform.name] = uniform),
-  );
-  shaderParams.uniforms = Object.values(uniforms);
+  const uniforms: Record<TypedArg['name'], TypedArg> = {};
+  newUniforms.forEach((uniform) => (uniforms[uniform.name] = uniform));
 
-  return shaderParams;
+  return {
+    uniforms: Object.values(uniforms),
+    fragColor,
+    transformApplications: newTransformApplications,
+  };
 }

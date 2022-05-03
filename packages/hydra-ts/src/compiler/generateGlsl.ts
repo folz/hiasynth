@@ -1,6 +1,5 @@
 import { Texture2D } from 'regl';
 import { Glsl, TransformApplication } from '../glsl/Glsl';
-import { ShaderParams } from './compileWithSynth';
 import arrayUtils from '../lib/array-utils';
 import { Source } from '../Source';
 import { Output } from '../Output';
@@ -19,7 +18,8 @@ export interface TypedArg {
 
 export function generateGlsl(
   transformApplications: TransformApplication[],
-  shaderParams: ShaderParams,
+  uniforms: TypedArg[],
+  newTransformApplications: TransformApplication[],
 ): GlslGenerator {
   let generateFragColor: GlslGenerator = () => '';
 
@@ -34,37 +34,46 @@ export function generateGlsl(
       | Texture2D
       | undefined;
 
-    const typedArgs = formatArguments(
-      transformApplication,
-      shaderParams.uniforms.length,
-    );
+    const typedArgs = formatArguments(transformApplication, uniforms.length);
 
     typedArgs.forEach((typedArg) => {
       if (typedArg.isUniform) {
-        shaderParams.uniforms.push(typedArg);
+        uniforms.push(typedArg);
       }
     });
 
     // add new glsl function to running list of functions
-    const isNewTransform = shaderParams.transformApplications.every(
+    const isNewTransform = newTransformApplications.every(
       (paramTransformApplication) =>
         transformApplication.transform.name !==
         paramTransformApplication.transform.name,
     );
 
     if (isNewTransform) {
-      shaderParams.transformApplications.push(transformApplication);
+      newTransformApplications.push(transformApplication);
     }
 
     // current function for generating frag color shader code
     const f0 = generateFragColor;
     if (transformApplication.transform.type === 'src') {
       generateFragColor = (uv) =>
-        `${shaderString(uv, transformApplication, typedArgs, shaderParams)}`;
+        `${shaderString(
+          uv,
+          transformApplication,
+          typedArgs,
+          uniforms,
+          newTransformApplications,
+        )}`;
     } else if (transformApplication.transform.type === 'coord') {
       generateFragColor = (uv) =>
         `${f0(
-          `${shaderString(uv, transformApplication, typedArgs, shaderParams)}`,
+          `${shaderString(
+            uv,
+            transformApplication,
+            typedArgs,
+            uniforms,
+            newTransformApplications,
+          )}`,
         )}`;
     } else if (transformApplication.transform.type === 'color') {
       generateFragColor = (uv) =>
@@ -72,14 +81,19 @@ export function generateGlsl(
           `${f0(uv)}`,
           transformApplication,
           typedArgs,
-          shaderParams,
+          uniforms,
+          newTransformApplications,
         )}`;
     } else if (transformApplication.transform.type === 'combine') {
       // combining two generated shader strings (i.e. for blend, mult, add funtions)
       f1 =
         typedArgs[0].value && typedArgs[0].value.transforms
           ? (uv: string) =>
-              `${generateGlsl(typedArgs[0].value.transforms, shaderParams)(uv)}`
+              `${generateGlsl(
+                typedArgs[0].value.transforms,
+                uniforms,
+                newTransformApplications,
+              )(uv)}`
           : typedArgs[0].isUniform
           ? () => typedArgs[0].name
           : () => typedArgs[0].value;
@@ -88,14 +102,19 @@ export function generateGlsl(
           `${f0(uv)}, ${f1(uv)}`,
           transformApplication,
           typedArgs.slice(1),
-          shaderParams,
+          uniforms,
+          newTransformApplications,
         )}`;
     } else if (transformApplication.transform.type === 'combineCoord') {
       // combining two generated shader strings (i.e. for modulate functions)
       f1 =
         typedArgs[0].value && typedArgs[0].value.transforms
           ? (uv: string) =>
-              `${generateGlsl(typedArgs[0].value.transforms, shaderParams)(uv)}`
+              `${generateGlsl(
+                typedArgs[0].value.transforms,
+                uniforms,
+                newTransformApplications,
+              )(uv)}`
           : typedArgs[0].isUniform
           ? () => typedArgs[0].name
           : () => typedArgs[0].value;
@@ -105,7 +124,8 @@ export function generateGlsl(
             `${uv}, ${f1(uv)}`,
             transformApplication,
             typedArgs.slice(1),
-            shaderParams,
+            uniforms,
+            newTransformApplications,
           )}`,
         )}`;
     }
@@ -117,7 +137,8 @@ function shaderString(
   uv: string,
   transformApplication: TransformApplication,
   inputs: TypedArg[],
-  shaderParams: ShaderParams,
+  uniforms: TypedArg[],
+  newTransformApplications: TransformApplication[],
 ): string {
   const str = inputs
     .map((input) => {
@@ -125,7 +146,11 @@ function shaderString(
         return input.name;
       } else if (input.value && input.value.transforms) {
         // this by definition needs to be a generator, hence we start with 'st' as the initial value for generating the glsl fragment
-        return `${generateGlsl(input.value.transforms, shaderParams)('st')}`;
+        return `${generateGlsl(
+          input.value.transforms,
+          uniforms,
+          newTransformApplications,
+        )('st')}`;
       }
       return input.value;
     })
