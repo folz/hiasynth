@@ -41,7 +41,9 @@ export class Output {
       );
   }
 
-  resize(width: number, height: number) {
+  resize(synth: Synth) {
+    const [width, height] = synth.resolution;
+
     this.fbos.forEach((fbo) => {
       fbo.resize(width, height);
     });
