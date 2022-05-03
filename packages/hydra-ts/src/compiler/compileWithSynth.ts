@@ -1,8 +1,7 @@
-import { TypedArg } from './formatArguments';
 import { utilityFunctions } from '../glsl/utilityFunctions';
 import { TransformApplication } from '../glsl/Glsl';
 import { DynamicVariable, DynamicVariableFn, Texture2D, Uniform } from 'regl';
-import { generateGlsl } from './generateGlsl';
+import { generateGlsl, TypedArg } from './generateGlsl';
 import { Synth } from '../Hydra';
 
 export type CompiledTransform = {
