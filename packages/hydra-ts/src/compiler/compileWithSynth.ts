@@ -22,14 +22,18 @@ export function compileWithSynth(
   transformApplications: TransformApplication[],
   synth: Synth,
 ): CompiledTransform {
-  const {
-    fragColor,
-    transformApplications: compiledTransformApplications,
-    uniforms,
-  } = compileGlsl(transformApplications);
+  const transformApplicationsRef: TransformApplication[] = [];
+  const typedArgsRef: TypedArg[] = [];
+
+  // Note: generateGlsl() mutates typedArgsRef and transformApplicationsRef
+  const fragColor = generateGlsl(
+    transformApplications,
+    typedArgsRef,
+    transformApplicationsRef,
+  )('st');
 
   const uniformMap: Record<TypedArg['name'], TypedArg['value']> = {};
-  uniforms.forEach((uniform) => {
+  typedArgsRef.forEach((uniform) => {
     uniformMap[uniform.name] = uniform.value;
   });
 
@@ -38,7 +42,7 @@ export function compileWithSynth(
   
   #define PI 3.1415926538
 
-  ${uniforms
+  ${typedArgsRef
     .map((uniform) => {
       return `
       uniform ${uniform.type} ${uniform.name};`;
@@ -56,7 +60,7 @@ export function compileWithSynth(
     })
     .join('')}
 
-  ${compiledTransformApplications
+  ${transformApplicationsRef
     .map((transformApplication) => {
       return `
             ${transformApplication.transform.glsl}
@@ -74,23 +78,5 @@ export function compileWithSynth(
   return {
     frag: frag,
     uniforms: { ...synth.environment.defaultUniforms, ...uniformMap },
-  };
-}
-
-export function compileGlsl(transformApplications: TransformApplication[]) {
-  const uniforms: TypedArg[] = [];
-  const newTransformApplications: TransformApplication[] = [];
-
-  // Note: generateGlsl() also mutates newTransformApplications
-  const fragColor = generateGlsl(
-    transformApplications,
-    uniforms,
-    newTransformApplications,
-  )('st');
-
-  return {
-    uniforms,
-    fragColor,
-    transformApplications: newTransformApplications,
   };
 }

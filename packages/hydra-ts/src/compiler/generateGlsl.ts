@@ -18,8 +18,8 @@ export interface TypedArg {
 
 export function generateGlsl(
   transformApplications: TransformApplication[],
-  uniforms: TypedArg[],
-  newTransformApplications: TransformApplication[],
+  typedArgsRef: TypedArg[],
+  transformApplicationsRef: TransformApplication[],
 ): GlslGenerator {
   let generateFragColor: GlslGenerator = () => '';
 
@@ -34,23 +34,26 @@ export function generateGlsl(
       | Texture2D
       | undefined;
 
-    const typedArgs = formatArguments(transformApplication, uniforms.length);
+    const typedArgs = formatArguments(
+      transformApplication,
+      typedArgsRef.length,
+    );
 
     typedArgs.forEach((typedArg) => {
       if (typedArg.isUniform) {
-        uniforms.push(typedArg);
+        typedArgsRef.push(typedArg);
       }
     });
 
     // add new glsl function to running list of functions
-    const isNewTransform = newTransformApplications.every(
+    const isNewTransform = transformApplicationsRef.every(
       (paramTransformApplication) =>
         transformApplication.transform.name !==
         paramTransformApplication.transform.name,
     );
 
     if (isNewTransform) {
-      newTransformApplications.push(transformApplication);
+      transformApplicationsRef.push(transformApplication);
     }
 
     // current function for generating frag color shader code
@@ -61,8 +64,8 @@ export function generateGlsl(
           uv,
           transformApplication,
           typedArgs,
-          uniforms,
-          newTransformApplications,
+          typedArgsRef,
+          transformApplicationsRef,
         )}`;
     } else if (transformApplication.transform.type === 'coord') {
       generateFragColor = (uv) =>
@@ -71,8 +74,8 @@ export function generateGlsl(
             uv,
             transformApplication,
             typedArgs,
-            uniforms,
-            newTransformApplications,
+            typedArgsRef,
+            transformApplicationsRef,
           )}`,
         )}`;
     } else if (transformApplication.transform.type === 'color') {
@@ -81,8 +84,8 @@ export function generateGlsl(
           `${f0(uv)}`,
           transformApplication,
           typedArgs,
-          uniforms,
-          newTransformApplications,
+          typedArgsRef,
+          transformApplicationsRef,
         )}`;
     } else if (transformApplication.transform.type === 'combine') {
       // combining two generated shader strings (i.e. for blend, mult, add funtions)
@@ -91,8 +94,8 @@ export function generateGlsl(
           ? (uv: string) =>
               `${generateGlsl(
                 typedArgs[0].value.transforms,
-                uniforms,
-                newTransformApplications,
+                typedArgsRef,
+                transformApplicationsRef,
               )(uv)}`
           : typedArgs[0].isUniform
           ? () => typedArgs[0].name
@@ -102,8 +105,8 @@ export function generateGlsl(
           `${f0(uv)}, ${f1(uv)}`,
           transformApplication,
           typedArgs.slice(1),
-          uniforms,
-          newTransformApplications,
+          typedArgsRef,
+          transformApplicationsRef,
         )}`;
     } else if (transformApplication.transform.type === 'combineCoord') {
       // combining two generated shader strings (i.e. for modulate functions)
@@ -112,8 +115,8 @@ export function generateGlsl(
           ? (uv: string) =>
               `${generateGlsl(
                 typedArgs[0].value.transforms,
-                uniforms,
-                newTransformApplications,
+                typedArgsRef,
+                transformApplicationsRef,
               )(uv)}`
           : typedArgs[0].isUniform
           ? () => typedArgs[0].name
@@ -124,8 +127,8 @@ export function generateGlsl(
             `${uv}, ${f1(uv)}`,
             transformApplication,
             typedArgs.slice(1),
-            uniforms,
-            newTransformApplications,
+            typedArgsRef,
+            transformApplicationsRef,
           )}`,
         )}`;
     }
