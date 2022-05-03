@@ -9,31 +9,30 @@ type Generator = (...args: unknown[]) => Glsl;
 
 export function createTransformChainClass<
   T extends readonly TransformDefinition[],
->(modifierTransforms: T): typeof Glsl {
+>(transformDefinitions: T): typeof Glsl {
   const sourceClass = class extends Glsl {};
 
-  for (const transform of modifierTransforms) {
-    const processed = processGlsl(transform);
+  transformDefinitions
+    .map(processGlsl)
+    .forEach((processedTransformDefinition) => {
+      function addTransformApplicationToInternalChain(
+        this: Glsl,
+        ...args: unknown[]
+      ): Glsl {
+        const transform = {
+          transform: processedTransformDefinition,
+          userArgs: args,
+        };
 
-    addTransformChainMethod(sourceClass, processed);
-  }
+        return new sourceClass([...this.transforms, transform]);
+      }
+
+      // @ts-ignore
+      sourceClass.prototype[processedTransformDefinition.name] =
+        addTransformApplicationToInternalChain;
+    });
 
   return sourceClass;
-}
-
-export function createGenerator(
-  generatorTransform: TransformDefinition,
-  TransformChainClass: typeof Glsl,
-): Generator {
-  const processed = processGlsl(generatorTransform);
-
-  return (...args: unknown[]) =>
-    new TransformChainClass([
-      {
-        transform: processed,
-        userArgs: args,
-      },
-    ]);
 }
 
 export function createGenerators(
@@ -42,32 +41,19 @@ export function createGenerators(
 ): Record<string, Generator> {
   const generatorMap: Record<string, Generator> = {};
 
-  for (const transform of generatorTransforms) {
-    generatorMap[transform.name] = createGenerator(transform, sourceClass);
-  }
+  generatorTransforms
+    .map(processGlsl)
+    .forEach((processedTransformDefinition) => {
+      generatorMap[processedTransformDefinition.name] = (...args: unknown[]) =>
+        new sourceClass([
+          {
+            transform: processedTransformDefinition,
+            userArgs: args,
+          },
+        ]);
+    });
 
   return generatorMap;
-}
-
-export function addTransformChainMethod(
-  cls: typeof Glsl,
-  processedTransformDefinition: ProcessedTransformDefinition,
-) {
-  function addTransformApplicationToInternalChain(
-    this: Glsl,
-    ...args: unknown[]
-  ): Glsl {
-    const transform = {
-      transform: processedTransformDefinition,
-      userArgs: args,
-    };
-
-    return new cls([...this.transforms, transform]);
-  }
-
-  // @ts-ignore
-  cls.prototype[processedTransformDefinition.name] =
-    addTransformApplicationToInternalChain;
 }
 
 const typeLookup: Record<
