@@ -21,8 +21,13 @@ interface Source {
   clear(): void;
 }
 
+interface Transform {
+  __transform__: true;
+}
+
 interface Buffer {
   fbos: [];
+  render(transforms: Transform[]);
 }
 
 type Synth = {bpm: number, fps: undefined, resolution: [number, number], speed: number, stats: {}, time: number}
@@ -32,6 +37,7 @@ type Arg<T> = T | T[] | ((args: Synth) => T);
 type Drawable = Source | Buffer | Texture;
 
 interface Texture {
+  transforms: Transform[];
   rotate: (angle?: Arg<number>, speed?: Arg<number>) => Texture;
   scale: (
     amount?: Arg<number>,
