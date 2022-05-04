@@ -79,20 +79,17 @@ export type TransformDefinitionType =
 
 export type TransformDefinitionInputTypeFloat = {
   type: 'float';
-  default?:
-    | number
-    | number[]
-    | ((context: any, props: any) => number | number[]);
+  default: number;
 };
 
 export type TransformDefinitionInputTypeSampler2D = {
   type: 'sampler2D';
-  default?: REGL.Texture2D | number;
+  default: typeof NaN;
 };
 
 export type TransformDefinitionInputTypeVec4 = {
   type: 'vec4';
-  default?: string | number;
+  vecLen: number;
 };
 
 export type TransformDefinitionInputUnion =
@@ -102,7 +99,6 @@ export type TransformDefinitionInputUnion =
 
 export type TransformDefinitionInput = TransformDefinitionInputUnion & {
   name: string;
-  vecLen?: number;
 };
 
 export interface TransformDefinition {
