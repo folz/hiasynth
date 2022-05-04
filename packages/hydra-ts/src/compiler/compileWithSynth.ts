@@ -1,5 +1,5 @@
 import { utilityFunctions } from '../glsl/utilityFunctions';
-import { TransformApplication } from '../glsl/Glsl';
+import { TransformApplication } from '../glsl/TransformChain';
 import { DynamicVariable, DynamicVariableFn, Texture2D, Uniform } from 'regl';
 import { generateGlsl, FormattedArgument } from './generateGlsl';
 import { Synth } from '../Hydra';

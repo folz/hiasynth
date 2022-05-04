@@ -1,5 +1,5 @@
 import { Attributes, DrawCommand, Framebuffer2D } from 'regl';
-import { TransformApplication } from './glsl/Glsl';
+import { TransformApplication } from './glsl/TransformChain';
 import { compileWithSynth } from './compiler/compileWithSynth';
 import { Synth } from './Hydra';
 

@@ -3,49 +3,49 @@ import {
   TransformDefinition,
   TransformDefinitionType,
 } from './transformDefinitions.js';
-import { Glsl } from './Glsl';
+import { TransformChain } from './TransformChain';
 
-type Generator = (...args: unknown[]) => Glsl;
+export type TransformChainGenerator = (...args: unknown[]) => TransformChain;
 
 export function createTransformChainClass<
   T extends readonly TransformDefinition[],
->(transformDefinitions: T): typeof Glsl {
-  const sourceClass = class extends Glsl {};
+>(transformDefinitions: T): typeof TransformChain {
+  const TransformChainClass = class extends TransformChain {};
 
   transformDefinitions
     .map(processGlsl)
     .forEach((processedTransformDefinition) => {
       function addTransformApplicationToInternalChain(
-        this: Glsl,
+        this: TransformChain,
         ...args: unknown[]
-      ): Glsl {
+      ): TransformChain {
         const transform = {
           transform: processedTransformDefinition,
           userArgs: args,
         };
 
-        return new sourceClass([...this.transforms, transform]);
+        return new TransformChainClass([...this.transforms, transform]);
       }
 
       // @ts-ignore
-      sourceClass.prototype[processedTransformDefinition.name] =
+      TransformChainClass.prototype[processedTransformDefinition.name] =
         addTransformApplicationToInternalChain;
     });
 
-  return sourceClass;
+  return TransformChainClass;
 }
 
 export function createGenerators(
   generatorTransforms: readonly TransformDefinition[],
-  sourceClass: typeof Glsl,
-): Record<string, Generator> {
-  const generatorMap: Record<string, Generator> = {};
+  TransformChainClass: typeof TransformChain,
+): Record<string, TransformChainGenerator> {
+  const generatorMap: Record<string, TransformChainGenerator> = {};
 
   generatorTransforms
     .map(processGlsl)
     .forEach((processedTransformDefinition) => {
       generatorMap[processedTransformDefinition.name] = (...args: unknown[]) =>
-        new sourceClass([
+        new TransformChainClass([
           {
             transform: processedTransformDefinition,
             userArgs: args,

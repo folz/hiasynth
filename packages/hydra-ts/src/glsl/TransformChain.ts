@@ -6,7 +6,7 @@ export interface TransformApplication {
   userArgs: unknown[];
 }
 
-export class Glsl {
+export class TransformChain {
   transforms: TransformApplication[];
 
   constructor(transforms: TransformApplication[]) {

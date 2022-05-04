@@ -1,5 +1,5 @@
 import { Texture2D } from 'regl';
-import { Glsl, TransformApplication } from '../glsl/Glsl';
+import { TransformChain, TransformApplication } from '../glsl/TransformChain';
 import arrayUtils from '../lib/array-utils';
 import { Source } from '../Source';
 import { Output } from '../Output';
@@ -219,8 +219,8 @@ export function formatArguments(
       }
     }
 
-    if (value instanceof Glsl) {
-      // GLSLSource
+    if (value instanceof TransformChain) {
+      // osc()
 
       isUniform = false;
     } else if (input.type === 'float' && typeof value === 'number') {
