@@ -5,7 +5,7 @@ import { Synth } from './Hydra';
 
 export class Output {
   attributes: Attributes;
-  draw: DrawCommand;
+  draw: DrawCommand | (() => void);
   fbos: Framebuffer2D[];
   synth: Synth;
   pingPongIndex = 0;
@@ -13,8 +13,6 @@ export class Output {
   constructor(synth: Synth) {
     this.synth = synth;
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     this.draw = () => {};
 
     this.attributes = {
@@ -47,6 +45,14 @@ export class Output {
     this.fbos.forEach((fbo) => {
       fbo.resize(width, height);
     });
+  }
+
+  hush() {
+    this.draw = () => {};
+
+    this.fbos.forEach((fbo) =>
+      fbo.use(() => this.synth.environment.regl.clear({ color: [0, 0, 0, 0] })),
+    );
   }
 
   getCurrent() {

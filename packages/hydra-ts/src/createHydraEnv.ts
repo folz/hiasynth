@@ -1,11 +1,10 @@
 import { createHydra } from './Hydra';
 import type { Hydra, HydraRendererOptions } from './Hydra';
-import { solid } from './glsl';
 import { Output } from './Output';
 
 export function hush(this: undefined, hydra: Hydra): void {
   hydra.outputs.forEach((output) => {
-    solid(1, 1, 1, 0).out(output);
+    output.hush();
   });
 }
 
