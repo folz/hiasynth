@@ -10,14 +10,5 @@ import {
 const TransformChainClass = createTransformChainClass(modifierTransforms);
 const generators = createGenerators(generatorTransforms, TransformChainClass);
 
-export const {
-  gradient,
-  noise,
-  osc,
-  shape,
-  solid,
-  sq,
-  src,
-  tri,
-  voronoi,
-} = generators;
+export const { gradient, noise, osc, shape, solid, sq, src, tri, voronoi } =
+  generators;

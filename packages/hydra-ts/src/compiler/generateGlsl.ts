@@ -139,7 +139,10 @@ function shaderString(
     .map((formattedArgument) => {
       if (formattedArgument.isUniform) {
         return formattedArgument.name;
-      } else if (formattedArgument.value && formattedArgument.value.transforms) {
+      } else if (
+        formattedArgument.value &&
+        formattedArgument.value.transforms
+      ) {
         // this by definition needs to be a generator, hence we start with 'st' as the initial value for generating the glsl fragment
         return `${generateGlsl(
           formattedArgument.value.transforms,

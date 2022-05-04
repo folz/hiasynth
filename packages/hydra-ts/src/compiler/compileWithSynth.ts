@@ -33,7 +33,10 @@ export function compileWithSynth(
     transformApplicationsRef,
   )('st');
 
-  const formattedArgumentsMap: Record<FormattedArgument['name'], FormattedArgument['value']> = {};
+  const formattedArgumentsMap: Record<
+    FormattedArgument['name'],
+    FormattedArgument['value']
+  > = {};
   formattedArgumentsRef.forEach((formattedArgument) => {
     formattedArgumentsMap[formattedArgument.name] = formattedArgument.value;
   });
@@ -88,7 +91,10 @@ export function compileWithSynth(
 
   return {
     frag,
-    uniforms: { ...synth.environment.defaultUniforms, ...formattedArgumentsMap },
+    uniforms: {
+      ...synth.environment.defaultUniforms,
+      ...formattedArgumentsMap,
+    },
     vert,
   };
 }
