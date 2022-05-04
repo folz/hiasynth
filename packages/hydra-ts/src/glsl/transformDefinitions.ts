@@ -84,7 +84,6 @@ export type TransformDefinitionInputTypeFloat = {
 
 export type TransformDefinitionInputTypeSampler2D = {
   type: 'sampler2D';
-  default: typeof NaN;
 };
 
 export type TransformDefinitionInputTypeVec4 = {
@@ -287,7 +286,6 @@ export const generatorTransforms = [
       {
         type: 'sampler2D',
         name: 'tex',
-        default: NaN,
       },
     ],
     glsl: `return texture2D(tex, fract(_st));`,

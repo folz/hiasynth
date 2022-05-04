@@ -157,8 +157,19 @@ function shaderString(
   return `${transformApplication.transform.name}(${uv}${str})`;
 }
 
+export type FormattedValue =
+  | undefined
+  | string
+  | number
+  | number[]
+  | ((
+      context: any,
+      props: any,
+    ) => number | number[] | REGL.Framebuffer2D | REGL.Texture2D)
+  | TransformChain;
+
 export interface FormattedArgument {
-  value: TransformDefinitionInput['default'];
+  value: FormattedValue;
   type: TransformDefinitionInput['type'];
   isUniform: boolean;
   name: TransformDefinitionInput['name'];
@@ -172,11 +183,11 @@ export function formatArguments(
   const { inputs } = transform;
 
   return inputs.map((input, index) => {
-    let value: any = input.default;
+    let value: FormattedValue = undefined;
     let isUniform = false;
 
     if (input.type === 'float') {
-      value = ensureDecimalDot(value);
+      value = input.default;
     }
 
     // if user has input something for this argument
@@ -189,7 +200,7 @@ export function formatArguments(
         if (input.type === 'vec4') {
           value = (context: any, props: any) =>
             fillArrayWithDefaults(userArg(props), input.vecLen);
-        } else {
+        } else if (input.type === 'float') {
           value = (context: any, props: any) => {
             try {
               return userArg(props);
@@ -198,13 +209,16 @@ export function formatArguments(
               return input.default;
             }
           };
+        } else {
+          // 'sampler2D'
+          value = (context: any, props: any) => userArg(props);
         }
 
         isUniform = true;
       } else if (Array.isArray(userArg)) {
         if (input.type === 'vec4') {
           isUniform = true;
-          value = fillArrayWithDefaults(value, input.vecLen);
+          value = fillArrayWithDefaults(userArg, input.vecLen);
         } else {
           value = (context: any, props: any) =>
             arrayUtils.getValue(userArg)(props);
@@ -214,19 +228,20 @@ export function formatArguments(
     }
 
     if (value instanceof TransformChain) {
-      // osc()
-
-      isUniform = false;
+      // TODO: Can remove?
     } else if (input.type === 'float' && typeof value === 'number') {
       // Number
 
       value = ensureDecimalDot(value);
-    } else if (input.type.startsWith('vec') && Array.isArray(value)) {
+    } else if (input.type === 'vec4' && Array.isArray(value)) {
       // Vector literal (as array)
 
       isUniform = false;
       value = `${input.type}(${value.map(ensureDecimalDot).join(', ')})`;
-    } else if (input.type === 'sampler2D') {
+    } else if (
+      input.type === 'sampler2D' &&
+      (value instanceof Source || value instanceof Output)
+    ) {
       const ref = value;
 
       value = () => ref.getTexture();
