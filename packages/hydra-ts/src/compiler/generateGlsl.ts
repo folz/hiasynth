@@ -184,20 +184,19 @@ export function formatArguments(
 
     // if user has input something for this argument
     if (userArgs.length > index) {
-      const arg = userArgs[index];
+      const userArg = userArgs[index];
 
-      value = arg;
-      // do something if a composite or transformApplication
+      value = userArg;
 
-      if (typeof arg === 'function') {
+      if (typeof userArg === 'function') {
         if (vecLen > 0) {
           // expected input is a vector, not a scalar
           value = (context: any, props: any) =>
-            fillArrayWithDefaults(arg(props), vecLen);
+            fillArrayWithDefaults(userArg(props), vecLen);
         } else {
           value = (context: any, props: any) => {
             try {
-              return arg(props);
+              return userArg(props);
             } catch (e) {
               console.log('ERROR', e);
               return input.default;
@@ -206,14 +205,15 @@ export function formatArguments(
         }
 
         isUniform = true;
-      } else if (Array.isArray(arg)) {
+      } else if (Array.isArray(userArg)) {
         if (vecLen > 0) {
           // expected input is a vector, not a scalar
           isUniform = true;
           value = fillArrayWithDefaults(value, vecLen);
         } else {
           // is Array
-          value = (context: any, props: any) => arrayUtils.getValue(arg)(props);
+          value = (context: any, props: any) =>
+            arrayUtils.getValue(userArg)(props);
           isUniform = true;
         }
       }
