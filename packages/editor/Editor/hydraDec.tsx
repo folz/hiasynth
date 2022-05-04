@@ -81,7 +81,6 @@ interface Texture {
   saturate: (amount?: Arg<number>) => Texture;
   hue: (hue?: Arg<number>) => Texture;
   colorama: (amount?: Arg<number>) => Texture;
-  sum: (scale?: Arg<number>) => Texture;
   r: (scale?: Arg<number>, offset?: Arg<number>) => Texture;
   g: (scale?: Arg<number>, offset?: Arg<number>) => Texture;
   b: (scale?: Arg<number>, offset?: Arg<number>) => Texture;
