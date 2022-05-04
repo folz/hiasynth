@@ -1,7 +1,7 @@
 import { utilityFunctions } from '../glsl/utilityFunctions';
 import { TransformApplication } from '../glsl/Glsl';
 import { DynamicVariable, DynamicVariableFn, Texture2D, Uniform } from 'regl';
-import { generateGlsl, TypedArg } from './generateGlsl';
+import { generateGlsl, FormattedArgument } from './generateGlsl';
 import { Synth } from '../Hydra';
 
 export type CompiledTransform = {
@@ -23,19 +23,19 @@ export function compileWithSynth(
   transformApplications: TransformApplication[],
   synth: Synth,
 ): CompiledTransform {
+  const formattedArgumentsRef: FormattedArgument[] = [];
   const transformApplicationsRef: TransformApplication[] = [];
-  const typedArgsRef: TypedArg[] = [];
 
-  // Note: generateGlsl() mutates typedArgsRef and transformApplicationsRef
+  // Note: generateGlsl() mutates formattedArgumentsRef and transformApplicationsRef
   const fragColor = generateGlsl(
     transformApplications,
-    typedArgsRef,
+    formattedArgumentsRef,
     transformApplicationsRef,
   )('st');
 
-  const uniformMap: Record<TypedArg['name'], TypedArg['value']> = {};
-  typedArgsRef.forEach((uniform) => {
-    uniformMap[uniform.name] = uniform.value;
+  const formattedArgumentsMap: Record<FormattedArgument['name'], FormattedArgument['value']> = {};
+  formattedArgumentsRef.forEach((formattedArgument) => {
+    formattedArgumentsMap[formattedArgument.name] = formattedArgument.value;
   });
 
   const frag = `
@@ -43,7 +43,7 @@ export function compileWithSynth(
   
   #define PI 3.1415926538
 
-  ${typedArgsRef
+  ${formattedArgumentsRef
     .map((uniform) => {
       return `
       uniform ${uniform.type} ${uniform.name};`;
@@ -88,7 +88,7 @@ export function compileWithSynth(
 
   return {
     frag,
-    uniforms: { ...synth.environment.defaultUniforms, ...uniformMap },
+    uniforms: { ...synth.environment.defaultUniforms, ...formattedArgumentsMap },
     vert,
   };
 }

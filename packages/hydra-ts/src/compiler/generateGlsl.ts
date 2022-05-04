@@ -8,17 +8,9 @@ import { TransformDefinitionInput } from '../glsl/transformDefinitions';
 
 export type GlslGenerator = (uv: string) => string;
 
-export interface TypedArg {
-  value: TransformDefinitionInput['default'];
-  type: TransformDefinitionInput['type'];
-  isUniform: boolean;
-  name: TransformDefinitionInput['name'];
-  vecLen: number;
-}
-
 export function generateGlsl(
   transformApplications: TransformApplication[],
-  typedArgsRef: TypedArg[],
+  formattedArgumentsRef: FormattedArgument[],
   transformApplicationsRef: TransformApplication[],
 ): GlslGenerator {
   let generateFragColor: GlslGenerator = () => '';
@@ -36,12 +28,12 @@ export function generateGlsl(
 
     const typedArgs = formatArguments(
       transformApplication,
-      typedArgsRef.length,
+      formattedArgumentsRef.length,
     );
 
     typedArgs.forEach((typedArg) => {
       if (typedArg.isUniform) {
-        typedArgsRef.push(typedArg);
+        formattedArgumentsRef.push(typedArg);
       }
     });
 
@@ -64,7 +56,7 @@ export function generateGlsl(
           uv,
           transformApplication,
           typedArgs,
-          typedArgsRef,
+          formattedArgumentsRef,
           transformApplicationsRef,
         )}`;
     } else if (transformApplication.transform.type === 'coord') {
@@ -74,7 +66,7 @@ export function generateGlsl(
             uv,
             transformApplication,
             typedArgs,
-            typedArgsRef,
+            formattedArgumentsRef,
             transformApplicationsRef,
           )}`,
         )}`;
@@ -84,7 +76,7 @@ export function generateGlsl(
           `${f0(uv)}`,
           transformApplication,
           typedArgs,
-          typedArgsRef,
+          formattedArgumentsRef,
           transformApplicationsRef,
         )}`;
     } else if (transformApplication.transform.type === 'combine') {
@@ -94,7 +86,7 @@ export function generateGlsl(
           ? (uv: string) =>
               `${generateGlsl(
                 typedArgs[0].value.transforms,
-                typedArgsRef,
+                formattedArgumentsRef,
                 transformApplicationsRef,
               )(uv)}`
           : typedArgs[0].isUniform
@@ -105,7 +97,7 @@ export function generateGlsl(
           `${f0(uv)}, ${f1(uv)}`,
           transformApplication,
           typedArgs.slice(1),
-          typedArgsRef,
+          formattedArgumentsRef,
           transformApplicationsRef,
         )}`;
     } else if (transformApplication.transform.type === 'combineCoord') {
@@ -115,7 +107,7 @@ export function generateGlsl(
           ? (uv: string) =>
               `${generateGlsl(
                 typedArgs[0].value.transforms,
-                typedArgsRef,
+                formattedArgumentsRef,
                 transformApplicationsRef,
               )(uv)}`
           : typedArgs[0].isUniform
@@ -127,7 +119,7 @@ export function generateGlsl(
             `${uv}, ${f1(uv)}`,
             transformApplication,
             typedArgs.slice(1),
-            typedArgsRef,
+            formattedArgumentsRef,
             transformApplicationsRef,
           )}`,
         )}`;
@@ -139,33 +131,41 @@ export function generateGlsl(
 function shaderString(
   uv: string,
   transformApplication: TransformApplication,
-  inputs: TypedArg[],
-  uniforms: TypedArg[],
-  newTransformApplications: TransformApplication[],
+  formattedArguments: FormattedArgument[],
+  formattedArgumentsRef: FormattedArgument[],
+  transformApplicationsRef: TransformApplication[],
 ): string {
-  const str = inputs
-    .map((input) => {
-      if (input.isUniform) {
-        return input.name;
-      } else if (input.value && input.value.transforms) {
+  const str = formattedArguments
+    .map((formattedArgument) => {
+      if (formattedArgument.isUniform) {
+        return formattedArgument.name;
+      } else if (formattedArgument.value && formattedArgument.value.transforms) {
         // this by definition needs to be a generator, hence we start with 'st' as the initial value for generating the glsl fragment
         return `${generateGlsl(
-          input.value.transforms,
-          uniforms,
-          newTransformApplications,
+          formattedArgument.value.transforms,
+          formattedArgumentsRef,
+          transformApplicationsRef,
         )('st')}`;
       }
-      return input.value;
+      return formattedArgument.value;
     })
     .reduce((p, c) => `${p}, ${c}`, '');
 
   return `${transformApplication.transform.name}(${uv}${str})`;
 }
 
+export interface FormattedArgument {
+  value: TransformDefinitionInput['default'];
+  type: TransformDefinitionInput['type'];
+  isUniform: boolean;
+  name: TransformDefinitionInput['name'];
+  vecLen: number;
+}
+
 export function formatArguments(
   transformApplication: TransformApplication,
   startIndex: number,
-): TypedArg[] {
+): FormattedArgument[] {
   const { transform, userArgs } = transformApplication;
   const { inputs } = transform;
 
