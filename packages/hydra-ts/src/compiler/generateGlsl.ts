@@ -1,10 +1,11 @@
 import REGL from 'regl';
-import { TransformChain, TransformApplication } from '../glsl/TransformChain';
+import { TransformApplication, TransformChain } from '../glsl/TransformChain';
 import arrayUtils from '../lib/array-utils';
 import { Source } from '../Source';
 import { Output } from '../Output';
 import { src } from '../glsl';
 import { TransformDefinitionInput } from '../glsl/transformDefinitions';
+import { Synth } from '../Hydra';
 
 export type GlslGenerator = (uv: string) => string;
 
@@ -22,7 +23,7 @@ export function generateGlsl(
       | string
       | number
       | number[]
-      | ((context: any, props: any) => number | number[])
+      | ((_context: any, props: Synth) => number | number[])
       | REGL.Texture2D
       | undefined;
 
@@ -160,12 +161,19 @@ function shaderString(
 export type FormattedValue =
   | undefined
   | string
+  | string[]
   | number
   | number[]
   | ((
-      context: any,
-      props: any,
-    ) => number | number[] | REGL.Framebuffer2D | REGL.Texture2D)
+      _context: any,
+      props: Synth,
+    ) =>
+      | number
+      | number[]
+      | REGL.Framebuffer2D
+      | REGL.Texture2D
+      | string
+      | string[])
   | TransformChain;
 
 export interface FormattedArgument {
@@ -183,74 +191,124 @@ export function formatArguments(
   const { inputs } = transform;
 
   return inputs.map((input, index) => {
-    let value: FormattedValue = undefined;
-    let isUniform = false;
-
-    if (input.type === 'float') {
-      value = input.default;
-    }
+    let value: FormattedValue;
+    let isUniform: boolean;
 
     // if user has input something for this argument
     if (userArgs.length > index) {
       const userArg = userArgs[index];
 
-      value = userArg;
-
       if (typeof userArg === 'function') {
         if (input.type === 'vec4') {
-          value = (context: any, props: any) =>
-            fillArrayWithDefaults(userArg(props), input.vecLen);
-        } else if (input.type === 'float') {
-          value = (context: any, props: any) => {
+          value = (_context: any, props: Synth) => {
+            let evaluated;
+
             try {
-              return userArg(props);
+              evaluated = userArg(props);
             } catch (e) {
-              console.log('ERROR', e);
-              return input.default;
+              console.error('ERR:', e);
+              evaluated = [1, 1, 1];
+            }
+
+            return fillArrayWithDefaults(evaluated, input.vecLen);
+          };
+          isUniform = true;
+        } else if (input.type === 'float') {
+          value = (_context: any, props: Synth) => {
+            let evaluated;
+
+            try {
+              evaluated = userArg(props);
+            } catch (e) {
+              console.error('ERR:', e);
+              evaluated = input.default;
+            }
+
+            if (Array.isArray(evaluated)) {
+              return arrayUtils.getValue(evaluated)(props);
+            } else {
+              return evaluated;
             }
           };
+          isUniform = true;
         } else {
           // 'sampler2D'
-          value = (context: any, props: any) => userArg(props);
-        }
+          value = (_context: any, props: Synth) => {
+            let evaluated;
 
+            try {
+              evaluated = userArg(props);
+            } catch (e) {
+              console.error('ERR:', e);
+              evaluated = undefined;
+            }
+
+            return evaluated;
+          };
+          isUniform = true;
+        }
+      } else if (userArg instanceof TransformChain) {
+        value = userArg;
+        isUniform = false;
+      } else if (input.type === 'float' && typeof userArg === 'number') {
+        // Number
+
+        value = ensureDecimalDot(userArg);
+        isUniform = false;
+      } else if (input.type === 'float' && Array.isArray(userArg)) {
+        value = (_context: any, props: Synth) =>
+          arrayUtils.getValue(userArg)(props);
         isUniform = true;
-      } else if (Array.isArray(userArg)) {
-        if (input.type === 'vec4') {
-          isUniform = true;
-          value = fillArrayWithDefaults(userArg, input.vecLen);
-        } else {
-          value = (context: any, props: any) =>
-            arrayUtils.getValue(userArg)(props);
-          isUniform = true;
+      } else if (input.type === 'vec4' && Array.isArray(userArg)) {
+        // Vector literal (as array)
+        value = `${input.type}(${fillArrayWithDefaults(userArg, input.vecLen)
+          .map(ensureDecimalDot)
+          .join(', ')})`;
+        isUniform = false;
+      } else if (
+        input.type === 'sampler2D' &&
+        (userArg instanceof Source || userArg instanceof Output)
+      ) {
+        value = () => userArg.getTexture();
+        isUniform = true;
+      } else if (userArg instanceof Source || userArg instanceof Output) {
+        value = src(userArg);
+        isUniform = false;
+      } else {
+        // Could not convert
+
+        value = undefined;
+        isUniform = false;
+      }
+    } else {
+      switch (input.type) {
+        case 'vec4': {
+          console.error(
+            `ERR: ${input.type} ${input.name} did not receive an argument`,
+          );
+          value = `${input.type}(${fillArrayWithDefaults(
+            [1, 1, 1],
+            input.vecLen,
+          )
+            .map(ensureDecimalDot)
+            .join(', ')})`;
+          isUniform = false;
+          break;
+        }
+        case 'float': {
+          value = ensureDecimalDot(input.default);
+          isUniform = false;
+          break;
+        }
+        case 'sampler2D': {
+          console.error(
+            `ERR: ${input.type} ${input.name} did not receive an argument`,
+          );
+          value = undefined;
+          isUniform = false;
+          break;
         }
       }
-    }
-
-    if (value instanceof TransformChain) {
-      // TODO: Can remove?
-    } else if (input.type === 'float' && typeof value === 'number') {
-      // Number
-
-      value = ensureDecimalDot(value);
-    } else if (input.type === 'vec4' && Array.isArray(value)) {
-      // Vector literal (as array)
-
-      isUniform = false;
-      value = `${input.type}(${value.map(ensureDecimalDot).join(', ')})`;
-    } else if (
-      input.type === 'sampler2D' &&
-      (value instanceof Source || value instanceof Output)
-    ) {
-      const ref = value;
-
-      value = () => ref.getTexture();
-      isUniform = true;
-    } else if (value instanceof Source || value instanceof Output) {
-      const ref = value;
-
-      value = src(ref);
-      isUniform = false;
     }
 
     // Add to uniform array if is a function that will pass in a different value on each render frame,
