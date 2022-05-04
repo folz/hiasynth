@@ -1,12 +1,12 @@
-import { Attributes, DrawCommand, Framebuffer2D } from 'regl';
+import REGL from 'regl';
 import { TransformApplication } from './glsl/TransformChain';
 import { compileWithSynth } from './compiler/compileWithSynth';
 import { Synth } from './Hydra';
 
 export class Output {
-  attributes: Attributes;
-  draw: DrawCommand | (() => void);
-  fbos: Framebuffer2D[];
+  attributes: REGL.Attributes;
+  draw: REGL.DrawCommand | (() => void);
+  fbos: REGL.Framebuffer2D[];
   synth: Synth;
   pingPongIndex = 0;
 

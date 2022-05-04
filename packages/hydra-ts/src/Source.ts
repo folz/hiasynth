@@ -1,13 +1,13 @@
 import { Webcam } from './lib/Webcam';
 import { Screen } from './lib/Screen';
-import { Texture2D, TextureImageData } from 'regl';
+import REGL from 'regl';
 import { Synth } from './Hydra';
 
 export class Source {
   synth: Synth;
-  src?: TextureImageData;
+  src?: REGL.TextureImageData;
   dynamic: boolean;
-  tex: Texture2D;
+  tex: REGL.Texture2D;
 
   constructor(synth: Synth) {
     this.synth = synth;

@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import REGL, { Regl } from 'regl';
+import REGL from 'regl';
 import { createHydraEnv, generators, Loop } from 'hydra-ts';
 import type { HydraEnv } from 'hydra-ts';
 import ArrayUtils from 'hydra-ts/src/lib/array-utils';
@@ -39,7 +39,7 @@ export const HydraCanvas = forwardRef<HTMLCanvasElement, HydraCanvasProps>(
   function HydraCanvas(props, ref) {
     const { height, width } = props;
 
-    const reglRef = useRef<Regl>();
+    const reglRef = useRef<REGL.Regl>();
     const hydraEnvRef = useRef<HydraEnv>();
     const [isReglLoaded, setIsReglLoaded] = useState(false);
 

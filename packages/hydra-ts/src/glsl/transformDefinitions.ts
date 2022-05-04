@@ -68,7 +68,7 @@ const types = {
 
 */
 
-import { Texture2D } from 'regl';
+import REGL from 'regl';
 
 export type TransformDefinitionType =
   | 'src'
@@ -87,7 +87,7 @@ export type TransformDefinitionInputTypeFloat = {
 
 export type TransformDefinitionInputTypeSampler2D = {
   type: 'sampler2D';
-  default?: Texture2D | number;
+  default?: REGL.Texture2D | number;
 };
 
 export type TransformDefinitionInputTypeVec4 = {

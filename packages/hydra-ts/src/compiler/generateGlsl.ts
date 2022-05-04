@@ -1,4 +1,4 @@
-import { Texture2D } from 'regl';
+import REGL from 'regl';
 import { TransformChain, TransformApplication } from '../glsl/TransformChain';
 import arrayUtils from '../lib/array-utils';
 import { Source } from '../Source';
@@ -23,7 +23,7 @@ export function generateGlsl(
       | number
       | number[]
       | ((context: any, props: any) => number | number[])
-      | Texture2D
+      | REGL.Texture2D
       | undefined;
 
     const formattedArguments = formatArguments(

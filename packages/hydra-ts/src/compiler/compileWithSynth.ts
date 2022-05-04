@@ -1,6 +1,6 @@
 import { utilityFunctions } from '../glsl/utilityFunctions';
 import { TransformApplication } from '../glsl/TransformChain';
-import { DynamicVariable, DynamicVariableFn, Texture2D, Uniform } from 'regl';
+import REGL from 'regl';
 import { generateGlsl, FormattedArgument } from './generateGlsl';
 import { Synth } from '../Hydra';
 
@@ -9,11 +9,11 @@ export type CompiledTransform = {
   uniforms: {
     [name: string]:
       | string
-      | Uniform
+      | REGL.Uniform
       | ((context: any, props: any) => number | number[])
-      | Texture2D
-      | DynamicVariable<any>
-      | DynamicVariableFn<any, any, any>
+      | REGL.Texture2D
+      | REGL.DynamicVariable<any>
+      | REGL.DynamicVariableFn<any, any, any>
       | undefined;
   };
   vert: string;
