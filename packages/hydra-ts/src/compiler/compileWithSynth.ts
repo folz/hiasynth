@@ -47,9 +47,9 @@ export function compileWithSynth(
   #define PI 3.1415926538
 
   ${formattedArgumentsRef
-    .map((uniform) => {
+    .map((formattedArgument) => {
       return `
-      uniform ${uniform.type} ${uniform.name};`;
+      uniform ${formattedArgument.type} ${formattedArgument.name};`;
     })
     .join('')}
   uniform float time;

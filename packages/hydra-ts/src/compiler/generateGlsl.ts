@@ -26,14 +26,14 @@ export function generateGlsl(
       | Texture2D
       | undefined;
 
-    const typedArgs = formatArguments(
+    const formattedArguments = formatArguments(
       transformApplication,
       formattedArgumentsRef.length,
     );
 
-    typedArgs.forEach((typedArg) => {
-      if (typedArg.isUniform) {
-        formattedArgumentsRef.push(typedArg);
+    formattedArguments.forEach((formattedArgument) => {
+      if (formattedArgument.isUniform) {
+        formattedArgumentsRef.push(formattedArgument);
       }
     });
 
@@ -55,7 +55,7 @@ export function generateGlsl(
         `${shaderString(
           uv,
           transformApplication,
-          typedArgs,
+          formattedArguments,
           formattedArgumentsRef,
           transformApplicationsRef,
         )}`;
@@ -65,7 +65,7 @@ export function generateGlsl(
           `${shaderString(
             uv,
             transformApplication,
-            typedArgs,
+            formattedArguments,
             formattedArgumentsRef,
             transformApplicationsRef,
           )}`,
@@ -75,50 +75,50 @@ export function generateGlsl(
         `${shaderString(
           `${f0(uv)}`,
           transformApplication,
-          typedArgs,
+          formattedArguments,
           formattedArgumentsRef,
           transformApplicationsRef,
         )}`;
     } else if (transformApplication.transform.type === 'combine') {
       // combining two generated shader strings (i.e. for blend, mult, add funtions)
       f1 =
-        typedArgs[0].value && typedArgs[0].value.transforms
+        formattedArguments[0].value && formattedArguments[0].value.transforms
           ? (uv: string) =>
               `${generateGlsl(
-                typedArgs[0].value.transforms,
+                formattedArguments[0].value.transforms,
                 formattedArgumentsRef,
                 transformApplicationsRef,
               )(uv)}`
-          : typedArgs[0].isUniform
-          ? () => typedArgs[0].name
-          : () => typedArgs[0].value;
+          : formattedArguments[0].isUniform
+          ? () => formattedArguments[0].name
+          : () => formattedArguments[0].value;
       generateFragColor = (uv) =>
         `${shaderString(
           `${f0(uv)}, ${f1(uv)}`,
           transformApplication,
-          typedArgs.slice(1),
+          formattedArguments.slice(1),
           formattedArgumentsRef,
           transformApplicationsRef,
         )}`;
     } else if (transformApplication.transform.type === 'combineCoord') {
       // combining two generated shader strings (i.e. for modulate functions)
       f1 =
-        typedArgs[0].value && typedArgs[0].value.transforms
+        formattedArguments[0].value && formattedArguments[0].value.transforms
           ? (uv: string) =>
               `${generateGlsl(
-                typedArgs[0].value.transforms,
+                formattedArguments[0].value.transforms,
                 formattedArgumentsRef,
                 transformApplicationsRef,
               )(uv)}`
-          : typedArgs[0].isUniform
-          ? () => typedArgs[0].name
-          : () => typedArgs[0].value;
+          : formattedArguments[0].isUniform
+          ? () => formattedArguments[0].name
+          : () => formattedArguments[0].value;
       generateFragColor = (uv) =>
         `${f0(
           `${shaderString(
             `${uv}, ${f1(uv)}`,
             transformApplication,
-            typedArgs.slice(1),
+            formattedArguments.slice(1),
             formattedArgumentsRef,
             transformApplicationsRef,
           )}`,
