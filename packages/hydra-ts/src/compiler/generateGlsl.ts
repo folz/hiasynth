@@ -162,7 +162,6 @@ export interface FormattedArgument {
   type: TransformDefinitionInput['type'];
   isUniform: boolean;
   name: TransformDefinitionInput['name'];
-  vecLen: number;
 }
 
 export function formatArguments(
@@ -251,7 +250,6 @@ export function formatArguments(
       value,
       type: input.type,
       isUniform,
-      vecLen,
       name,
     };
   });
