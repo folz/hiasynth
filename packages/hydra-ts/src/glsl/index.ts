@@ -16,7 +16,6 @@ export const {
   osc,
   shape,
   solid,
-  saw,
   sq,
   src,
   tri,
