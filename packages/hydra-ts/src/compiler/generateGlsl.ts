@@ -173,8 +173,6 @@ export function formatArguments(
   const { inputs } = transform;
 
   return inputs.map((input, index) => {
-    const vecLen = input.vecLen ?? 0;
-
     let value: any = input.default;
     let isUniform = false;
 
@@ -189,10 +187,9 @@ export function formatArguments(
       value = userArg;
 
       if (typeof userArg === 'function') {
-        if (vecLen > 0) {
-          // expected input is a vector, not a scalar
+        if (input.type === 'vec4') {
           value = (context: any, props: any) =>
-            fillArrayWithDefaults(userArg(props), vecLen);
+            fillArrayWithDefaults(userArg(props), input.vecLen);
         } else {
           value = (context: any, props: any) => {
             try {
@@ -206,12 +203,10 @@ export function formatArguments(
 
         isUniform = true;
       } else if (Array.isArray(userArg)) {
-        if (vecLen > 0) {
-          // expected input is a vector, not a scalar
+        if (input.type === 'vec4') {
           isUniform = true;
-          value = fillArrayWithDefaults(value, vecLen);
+          value = fillArrayWithDefaults(value, input.vecLen);
         } else {
-          // is Array
           value = (context: any, props: any) =>
             arrayUtils.getValue(userArg)(props);
           isUniform = true;

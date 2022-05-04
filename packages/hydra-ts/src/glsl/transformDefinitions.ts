@@ -89,7 +89,7 @@ export type TransformDefinitionInputTypeSampler2D = {
 
 export type TransformDefinitionInputTypeVec4 = {
   type: 'vec4';
-  vecLen: number;
+  vecLen: 4;
 };
 
 export type TransformDefinitionInputUnion =
