@@ -41,7 +41,8 @@ export function compileWithSynth(
     formattedArgumentsMap[formattedArgument.name] = formattedArgument.value;
   });
 
-  const frag = `
+  return {
+    frag: `
   precision ${synth.precision} float;
   
   #define PI 3.1415926538
@@ -77,9 +78,8 @@ export function compileWithSynth(
     vec2 st = gl_FragCoord.xy/resolution.xy;
     gl_FragColor = ${fragColor};
   }
-  `;
-
-  const vert = `
+  `,
+    vert: `
   precision ${synth.precision} float;
   attribute vec2 position;
   varying vec2 uv;
@@ -87,14 +87,10 @@ export function compileWithSynth(
   void main () {
     uv = position;
     gl_Position = vec4(2.0 * position - 1.0, 0, 1);
-  }`;
-
-  return {
-    frag,
+  }`,
     uniforms: {
       ...synth.environment.defaultUniforms,
       ...formattedArgumentsMap,
     },
-    vert,
   };
 }
