@@ -12,7 +12,7 @@ export function range(
   );
 }
 
-export function v(path: any) {
+export function v(path: unknown) {
   return `/v/${path}.mp4`;
 }
 

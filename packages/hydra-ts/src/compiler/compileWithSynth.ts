@@ -7,13 +7,14 @@ import { Synth } from '../Hydra';
 export type CompiledTransform = {
   frag: string;
   uniforms: {
+    // TODO This is the same type as generateGlsl's f1 L#24-30
     [name: string]:
       | string
       | REGL.Uniform
-      | ((context: any, props: any) => number | number[])
+      | ((_context: unknown, props: Synth) => number | number[])
       | REGL.Texture2D
-      | REGL.DynamicVariable<any>
-      | REGL.DynamicVariableFn<any, any, any>
+      | REGL.DynamicVariable<unknown>
+      | REGL.DynamicVariableFn<unknown>
       | undefined;
   };
   vert: string;

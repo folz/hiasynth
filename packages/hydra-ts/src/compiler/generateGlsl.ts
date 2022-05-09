@@ -17,13 +17,15 @@ export function generateGlsl(
   let generateFragColor: GlslGenerator = () => '';
 
   transformApplications.forEach((transformApplication) => {
+    // TODO This is the same type as compileWithSynth's f1 L#11-18
     let f1: (
       uv: string,
     ) =>
       | string
+      | string[]
       | number
       | number[]
-      | ((_context: any, props: Synth) => number | number[])
+      | ((_context: unknown, props: Synth) => number | number[])
       | REGL.Texture2D
       | undefined;
 
@@ -82,17 +84,18 @@ export function generateGlsl(
         )}`;
     } else if (transformApplication.transform.type === 'combine') {
       // combining two generated shader strings (i.e. for blend, mult, add funtions)
+      const { isUniform, name, value } = formattedArguments[0];
       f1 =
-        formattedArguments[0].value && formattedArguments[0].value.transforms
+        value instanceof TransformChain
           ? (uv: string) =>
               `${generateGlsl(
-                formattedArguments[0].value.transforms,
+                value.transforms,
                 formattedArgumentsRef,
                 transformApplicationsRef,
               )(uv)}`
-          : formattedArguments[0].isUniform
-          ? () => formattedArguments[0].name
-          : () => formattedArguments[0].value;
+          : isUniform
+          ? () => name
+          : () => value;
       generateFragColor = (uv) =>
         `${shaderString(
           `${f0(uv)}, ${f1(uv)}`,
@@ -103,17 +106,18 @@ export function generateGlsl(
         )}`;
     } else if (transformApplication.transform.type === 'combineCoord') {
       // combining two generated shader strings (i.e. for modulate functions)
+      const { isUniform, name, value } = formattedArguments[0];
       f1 =
-        formattedArguments[0].value && formattedArguments[0].value.transforms
+        value instanceof TransformChain
           ? (uv: string) =>
               `${generateGlsl(
-                formattedArguments[0].value.transforms,
+                value.transforms,
                 formattedArgumentsRef,
                 transformApplicationsRef,
               )(uv)}`
-          : formattedArguments[0].isUniform
-          ? () => formattedArguments[0].name
-          : () => formattedArguments[0].value;
+          : isUniform
+          ? () => name
+          : () => value;
       generateFragColor = (uv) =>
         `${f0(
           `${shaderString(
@@ -138,22 +142,24 @@ function shaderString(
 ): string {
   const str = formattedArguments
     .map((formattedArgument) => {
-      if (formattedArgument.isUniform) {
-        return formattedArgument.name;
-      } else if (
-        formattedArgument.value &&
-        formattedArgument.value.transforms
-      ) {
+      const { isUniform, name, value } = formattedArgument;
+
+      if (isUniform) {
+        return name;
+      }
+
+      if (value instanceof TransformChain) {
         // this by definition needs to be a generator, hence we start with 'st' as the initial value for generating the glsl fragment
         return `${generateGlsl(
-          formattedArgument.value.transforms,
+          value.transforms,
           formattedArgumentsRef,
           transformApplicationsRef,
         )('st')}`;
       }
-      return formattedArgument.value;
+
+      return value;
     })
-    .reduce((p, c) => `${p}, ${c}`, '');
+    .reduce((acc, referent) => `${acc}, ${referent}`, '');
 
   return `${transformApplication.transform.name}(${uv}${str})`;
 }
@@ -165,7 +171,7 @@ export type FormattedValue =
   | number
   | number[]
   | ((
-      _context: any,
+      _context: unknown,
       props: Synth,
     ) =>
       | number
@@ -173,7 +179,8 @@ export type FormattedValue =
       | REGL.Framebuffer2D
       | REGL.Texture2D
       | string
-      | string[])
+      | string[]
+      | (string | number)[])
   | TransformChain;
 
 export interface FormattedArgument {
@@ -200,7 +207,7 @@ export function formatArguments(
 
       if (typeof userArg === 'function') {
         if (input.type === 'vec4') {
-          value = (_context: any, props: Synth) => {
+          value = (_context: unknown, props: Synth) => {
             let evaluated;
 
             try {
@@ -214,7 +221,7 @@ export function formatArguments(
           };
           isUniform = true;
         } else if (input.type === 'float') {
-          value = (_context: any, props: Synth) => {
+          value = (_context: unknown, props: Synth) => {
             let evaluated;
 
             try {
@@ -233,7 +240,7 @@ export function formatArguments(
           isUniform = true;
         } else {
           // 'sampler2D'
-          value = (_context: any, props: Synth) => {
+          value = (_context: unknown, props: Synth) => {
             let evaluated;
 
             try {
@@ -256,7 +263,7 @@ export function formatArguments(
         value = ensureDecimalDot(userArg);
         isUniform = false;
       } else if (input.type === 'float' && Array.isArray(userArg)) {
-        value = (_context: any, props: Synth) =>
+        value = (_context: unknown, props: Synth) =>
           arrayUtils.getValue(userArg)(props);
         isUniform = true;
       } else if (input.type === 'vec4' && Array.isArray(userArg)) {
@@ -336,7 +343,7 @@ export function ensureDecimalDot(val: any): string {
   return val;
 }
 
-export function fillArrayWithDefaults(arr: any[], len: number) {
+export function fillArrayWithDefaults<T>(arr: (T | number)[], len: number) {
   // fill the array with default values if it's too short
   while (arr.length < len) {
     if (arr.length === 3) {
