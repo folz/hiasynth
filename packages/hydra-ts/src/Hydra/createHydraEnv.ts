@@ -42,8 +42,8 @@ export function tick(hydra: Hydra, dt: number): void {
     });
 
     hydra.renderFbo({
+      oTex: hydra.output.getCurrent(),
       resolution: hydra.synth.resolution,
-      tex0: hydra.output.getCurrent(),
       time: hydra.synth.time,
     });
 

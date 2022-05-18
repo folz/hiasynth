@@ -56,8 +56,8 @@ export function compileWithSynth(
     )
     .join('')}
 
+  uniform sampler2D oTex;
   uniform vec2 resolution;
-  uniform sampler2D tex0;
   uniform float time;
   varying vec2 uv;
 
