@@ -1,18 +1,15 @@
 import REGL from 'regl';
-import { Output } from './Output';
-import { Source } from './Source';
-import { Precision } from './types';
+import { Output } from '../Output';
+import { Source } from '../Source';
 
 export type Resolution = readonly [number, number];
 
-export interface HydraFboUniforms {
-  resolution: Resolution;
-  tex0: REGL.Resource;
-}
+export type Precision = 'lowp' | 'mediump' | 'highp';
 
 export interface HydraDrawUniforms {
   resolution: Resolution;
   time: number;
+  tex0: REGL.Resource;
 }
 
 export interface Synth {
@@ -88,12 +85,16 @@ export function createHydra(options: HydraRendererOptions): Hydra {
     },
   } as const;
 
-  const renderFbo = regl<HydraFboUniforms>({
+  const renderFbo = regl<HydraDrawUniforms>({
     frag: `
       precision ${synth.precision} float;
-      varying vec2 uv;
+
+      #define PI 3.1415926538
+
       uniform vec2 resolution;
       uniform sampler2D tex0;
+      uniform float time;
+      varying vec2 uv;
 
       void main () {
         gl_FragColor = texture2D(tex0, vec2(1.0 - uv.x, uv.y));
@@ -116,8 +117,9 @@ export function createHydra(options: HydraRendererOptions): Hydra {
       ],
     },
     uniforms: {
-      tex0: regl.prop<HydraFboUniforms, keyof HydraFboUniforms>('tex0'),
-      resolution: regl.prop<HydraFboUniforms, keyof HydraFboUniforms>(
+      tex0: regl.prop<HydraDrawUniforms, keyof HydraDrawUniforms>('tex0'),
+      time: regl.prop<HydraDrawUniforms, keyof HydraDrawUniforms>('time'),
+      resolution: regl.prop<HydraDrawUniforms, keyof HydraDrawUniforms>(
         'resolution',
       ),
     },

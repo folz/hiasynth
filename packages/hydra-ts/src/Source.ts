@@ -1,5 +1,5 @@
-import { Webcam } from './lib/Webcam';
-import { Screen } from './lib/Screen';
+import { Webcam } from './Webcam';
+import { Screen } from './Screen';
 import REGL from 'regl';
 import { Synth } from './Hydra';
 

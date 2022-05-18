@@ -1,6 +1,6 @@
 import { createHydra } from './Hydra';
 import type { Hydra, HydraRendererOptions } from './Hydra';
-import { Output } from './Output';
+import { Output } from '../Output';
 
 export function hush(hydra: Hydra): void {
   hydra.outputs.forEach((output) => {
@@ -42,8 +42,9 @@ export function tick(hydra: Hydra, dt: number): void {
     });
 
     hydra.renderFbo({
-      tex0: hydra.output.getCurrent(),
       resolution: hydra.synth.resolution,
+      tex0: hydra.output.getCurrent(),
+      time: hydra.synth.time,
     });
 
     hydra.timeSinceLastUpdate = 0;

@@ -1,7 +1,7 @@
 import REGL from 'regl';
-import { TransformApplication } from './glsl/TransformChain';
-import { compileWithSynth } from './compiler/compileWithSynth';
-import { Synth } from './Hydra';
+import { TransformApplication } from '../glsl/TransformChain';
+import { Synth } from '../Hydra';
+import { compileWithSynth } from './compileWithSynth';
 
 export class Output {
   attributes: REGL.Attributes;
