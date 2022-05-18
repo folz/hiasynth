@@ -76,7 +76,10 @@ export class Output {
       frag: pass.frag,
       vert: pass.vert,
       attributes: this.attributes,
-      uniforms: pass.uniforms,
+      uniforms: {
+        ...this.synth.environment.defaultUniforms,
+        ...pass.uniforms,
+      },
       count: 3,
       framebuffer: () => {
         this.pingPongIndex = this.pingPongIndex ? 0 : 1;
