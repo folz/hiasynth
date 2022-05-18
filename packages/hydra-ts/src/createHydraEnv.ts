@@ -2,18 +2,17 @@ import { createHydra } from './Hydra';
 import type { Hydra, HydraRendererOptions } from './Hydra';
 import { Output } from './Output';
 
-export function hush(this: undefined, hydra: Hydra): void {
+export function hush(hydra: Hydra): void {
   hydra.outputs.forEach((output) => {
     output.hush();
   });
 }
 
-export function render(this: undefined, hydra: Hydra, output?: Output): void {
+export function render(hydra: Hydra, output?: Output): void {
   hydra.output = output ?? hydra.outputs[0];
 }
 
 export function setResolution(
-  this: undefined,
   hydra: Hydra,
   width: number,
   height: number,
@@ -26,7 +25,7 @@ export function setResolution(
   });
 }
 
-export function tick(this: undefined, hydra: Hydra, dt: number): void {
+export function tick(hydra: Hydra, dt: number): void {
   hydra.synth.time += dt * 0.001 * hydra.synth.speed;
 
   hydra.timeSinceLastUpdate += dt;
@@ -64,10 +63,10 @@ export function createHydraEnv(options: HydraRendererOptions): HydraEnv {
 
   return {
     hydra,
-    hush: () => hush.apply(undefined, [hydra]),
-    render: (output?: Output) => render.apply(undefined, [hydra, output]),
+    hush: () => hush(hydra),
+    render: (output?: Output) => render(hydra, output),
     setResolution: (width: number, height: number) =>
-      setResolution.apply(undefined, [hydra, width, height]),
-    tick: (dt: number) => tick.apply(undefined, [hydra, dt]),
+      setResolution(hydra, width, height),
+    tick: (dt: number) => tick(hydra, dt),
   };
 }
