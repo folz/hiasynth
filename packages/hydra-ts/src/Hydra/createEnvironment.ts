@@ -33,7 +33,7 @@ export interface Synth {
   };
 }
 
-export interface HydraRendererOptions {
+export interface EnvironmentOptions {
   height: number;
   numOutputs?: number;
   numSources?: number;
@@ -42,7 +42,7 @@ export interface HydraRendererOptions {
   width: number;
 }
 
-export interface Hydra {
+export interface Environment {
   readonly synth: Synth;
   readonly outputs: Output[];
   readonly sources: Source[];
@@ -51,7 +51,7 @@ export interface Hydra {
   timeSinceLastUpdate: number;
 }
 
-export function createHydra(options: HydraRendererOptions): Hydra {
+export function createEnvironment(options: EnvironmentOptions): Environment {
   const {
     height,
     numOutputs = 4,
