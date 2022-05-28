@@ -1,16 +1,13 @@
 import REGL from 'regl';
-import { Output } from './Output';
-import { Source } from './Source';
-import { Precision } from './types';
+import { Output } from '../Output';
+import { Source } from '../Source';
 
 export type Resolution = readonly [number, number];
 
-export interface HydraFboUniforms {
-  resolution: Resolution;
-  tex0: REGL.Resource;
-}
+export type Precision = 'lowp' | 'mediump' | 'highp';
 
 export interface HydraDrawUniforms {
+  oTex: REGL.Resource;
   resolution: Resolution;
   time: number;
 }
@@ -36,7 +33,7 @@ export interface Synth {
   };
 }
 
-export interface HydraRendererOptions {
+export interface EnvironmentOptions {
   height: number;
   numOutputs?: number;
   numSources?: number;
@@ -45,16 +42,16 @@ export interface HydraRendererOptions {
   width: number;
 }
 
-export interface Hydra {
+export interface Environment {
   readonly synth: Synth;
   readonly outputs: Output[];
   readonly sources: Source[];
   output: Output;
-  renderFbo: REGL.DrawCommand<REGL.DefaultContext, {}>;
+  renderFbo: REGL.DrawCommand<REGL.DefaultContext, HydraDrawUniforms>;
   timeSinceLastUpdate: number;
 }
 
-export function createHydra(options: HydraRendererOptions): Hydra {
+export function createEnvironment(options: EnvironmentOptions): Environment {
   const {
     height,
     numOutputs = 4,
@@ -88,15 +85,19 @@ export function createHydra(options: HydraRendererOptions): Hydra {
     },
   } as const;
 
-  const renderFbo = regl<HydraFboUniforms>({
+  const renderFbo = regl<{}, {}, HydraDrawUniforms>({
     frag: `
       precision ${synth.precision} float;
-      varying vec2 uv;
+
+      #define PI 3.1415926538
+
       uniform vec2 resolution;
-      uniform sampler2D tex0;
+      uniform sampler2D oTex;
+      uniform float time;
+      varying vec2 uv;
 
       void main () {
-        gl_FragColor = texture2D(tex0, vec2(1.0 - uv.x, uv.y));
+        gl_FragColor = texture2D(oTex, vec2(1.0 - uv.x, uv.y));
       }
       `,
     vert: `
@@ -116,8 +117,9 @@ export function createHydra(options: HydraRendererOptions): Hydra {
       ],
     },
     uniforms: {
-      tex0: regl.prop<HydraFboUniforms, keyof HydraFboUniforms>('tex0'),
-      resolution: regl.prop<HydraFboUniforms, keyof HydraFboUniforms>(
+      oTex: regl.prop<HydraDrawUniforms, keyof HydraDrawUniforms>('oTex'),
+      time: regl.prop<HydraDrawUniforms, keyof HydraDrawUniforms>('time'),
+      resolution: regl.prop<HydraDrawUniforms, keyof HydraDrawUniforms>(
         'resolution',
       ),
     },

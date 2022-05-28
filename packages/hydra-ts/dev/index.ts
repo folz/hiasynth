@@ -1,5 +1,5 @@
 import REGL from 'regl';
-import { createHydraEnv, generators, Loop } from '../index';
+import { createActions, createEnvironment, generators, Loop } from '../index';
 import ArrayUtils from '../src/lib/array-utils';
 
 import './style.css';
@@ -18,19 +18,21 @@ ArrayUtils.init();
 
 const regl = REGL(canvas);
 
-const hydraEnv = createHydraEnv({
+const environment = createEnvironment({
   width: WIDTH * DENSITY,
   height: HEIGHT * DENSITY,
   precision: 'mediump',
   regl,
 });
 
+const actions = createActions(environment);
+
 // TODO capture a ref to loop
-const loop = new Loop(hydraEnv.tick);
+const loop = new Loop(actions.tick);
 loop.start();
 
-const { hydra, render } = hydraEnv;
-const { sources, outputs } = hydra;
+const { render } = actions;
+const { sources, outputs } = environment;
 const [s0, s1, s2, s3] = sources;
 const [o0, o1, o2, o3] = outputs;
 const { src, osc, gradient, shape, voronoi, noise } = generators;

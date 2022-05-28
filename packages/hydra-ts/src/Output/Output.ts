@@ -1,7 +1,7 @@
 import REGL from 'regl';
-import { TransformApplication } from './glsl/TransformChain';
-import { compileWithSynth } from './compiler/compileWithSynth';
-import { Synth } from './Hydra';
+import { TransformApplication } from '../glsl/TransformChain';
+import { Synth } from '../Hydra';
+import { compileWithSynth } from './compileWithSynth';
 
 export class Output {
   attributes: REGL.Attributes;
@@ -76,7 +76,10 @@ export class Output {
       frag: pass.frag,
       vert: pass.vert,
       attributes: this.attributes,
-      uniforms: pass.uniforms,
+      uniforms: {
+        ...this.synth.environment.defaultUniforms,
+        ...pass.uniforms,
+      },
       count: 3,
       framebuffer: () => {
         this.pingPongIndex = this.pingPongIndex ? 0 : 1;

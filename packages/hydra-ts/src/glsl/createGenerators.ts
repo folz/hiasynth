@@ -85,16 +85,17 @@ const typeLookup: Record<
 export function processGlsl(
   transformDefinition: TransformDefinition,
 ): ProcessedTransformDefinition {
-  const { implicitFirstArg, returnType } = typeLookup[transformDefinition.type];
+  const { inputs, name, glsl, type } = transformDefinition;
+  const { implicitFirstArg, returnType } = typeLookup[type];
 
   const signature = [
     implicitFirstArg,
-    ...transformDefinition.inputs.map((input) => `${input.type} ${input.name}`),
+    ...inputs.map((input) => `${input.type} ${input.name}`),
   ].join(', ');
 
   const glslFunction = `
-  ${returnType} ${transformDefinition.name}(${signature}) {
-      ${transformDefinition.glsl}
+  ${returnType} ${name}(${signature}) {
+      ${glsl}
   }
 `;
 

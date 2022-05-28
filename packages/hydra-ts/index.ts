@@ -1,6 +1,5 @@
-export { createHydraEnv } from './src/createHydraEnv';
-export type { HydraEnv } from './src/createHydraEnv';
-export type { Hydra } from './src/Hydra';
+export { createActions, createEnvironment } from './src/Hydra';
+export type { Environment } from './src/Hydra';
 export { Loop } from './src/Loop';
 export { Source } from './src/Source';
 export { Output } from './src/Output';

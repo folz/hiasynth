@@ -1,11 +1,11 @@
-import REGL from 'regl';
 import { TransformApplication, TransformChain } from '../glsl/TransformChain';
+import { Synth } from '../Hydra';
+import REGL from 'regl';
+import { TransformDefinitionInput } from '../glsl/transformDefinitions';
 import arrayUtils from '../lib/array-utils';
 import { Source } from '../Source';
-import { Output } from '../Output';
 import { src } from '../glsl';
-import { TransformDefinitionInput } from '../glsl/transformDefinitions';
-import { Synth } from '../Hydra';
+import { Output } from './Output';
 
 export type GlslGenerator = (uv: string) => string;
 

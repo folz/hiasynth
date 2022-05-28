@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import REGL from 'regl';
-import { createHydraEnv, generators, Loop } from 'hydra-ts';
-import type { HydraEnv } from 'hydra-ts';
+import { createActions, createEnvironment, generators, Loop } from 'hydra-ts';
+import type { Environment } from 'hydra-ts';
 import ArrayUtils from 'hydra-ts/src/lib/array-utils';
 
 const style = {
@@ -40,7 +40,7 @@ export const HydraCanvas = forwardRef<HTMLCanvasElement, HydraCanvasProps>(
     const { height, width } = props;
 
     const reglRef = useRef<REGL.Regl>();
-    const hydraEnvRef = useRef<HydraEnv>();
+    const environmentRef = useRef<Environment>();
     const [isReglLoaded, setIsReglLoaded] = useState(false);
 
     useGlobalHydraGenerators();
@@ -56,30 +56,31 @@ export const HydraCanvas = forwardRef<HTMLCanvasElement, HydraCanvasProps>(
     }, []);
 
     useEffect(() => {
-      if (!isReglLoaded || !reglRef.current || hydraEnvRef.current) {
+      if (!isReglLoaded || !reglRef.current || environmentRef.current) {
         return;
       }
 
       // TODO remove
       ArrayUtils.init();
 
-      const hydraEnv = createHydraEnv({
+      const environment = createEnvironment({
         width,
         height,
         regl: reglRef.current,
         precision: 'mediump',
       });
+      const actions = createActions(environment);
 
       // TODO capture a ref to loop
-      const loop = new Loop(hydraEnv.tick);
+      const loop = new Loop(actions.tick);
       loop.start();
       // @ts-ignore
       window.loop = loop;
       // @ts-ignore
-      window.hydraEnv = hydraEnv;
+      window.environment = environment;
 
-      const { hydra, render, hush, setResolution } = hydraEnv;
-      const { sources, outputs, synth } = hydra;
+      const { render, hush, setResolution } = actions;
+      const { sources, outputs, synth } = environment;
       const [s0, s1, s2, s3] = sources;
       const [o0, o1, o2, o3] = outputs;
 
@@ -110,12 +111,8 @@ export const HydraCanvas = forwardRef<HTMLCanvasElement, HydraCanvasProps>(
       // @ts-ignore
       window['o3'] = o3;
 
-      hydraEnvRef.current = hydraEnv;
+      environmentRef.current = environment;
     }, [isReglLoaded]);
-
-    useEffect(() => {
-      hydraEnvRef.current?.setResolution(width, height);
-    }, [width, height]);
 
     return (
       <canvas

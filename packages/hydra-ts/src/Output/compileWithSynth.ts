@@ -1,8 +1,8 @@
-import { utilityFunctions } from '../glsl/utilityFunctions';
 import { TransformApplication } from '../glsl/TransformChain';
-import REGL from 'regl';
-import { generateGlsl, FormattedArgument } from './generateGlsl';
 import { Synth } from '../Hydra';
+import { utilityFunctions } from '../glsl/utilityFunctions';
+import REGL from 'regl';
+import { FormattedArgument, generateGlsl } from './generateGlsl';
 
 export type CompiledTransform = {
   frag: string;
@@ -49,13 +49,16 @@ export function compileWithSynth(
   #define PI 3.1415926538
 
   ${formattedArgumentsRef
-    .map((formattedArgument) => {
-      return `
-      uniform ${formattedArgument.type} ${formattedArgument.name};`;
-    })
+    .map(
+      (formattedArgument) =>
+        `
+  uniform ${formattedArgument.type} ${formattedArgument.name};`,
+    )
     .join('')}
-  uniform float time;
+
+  uniform sampler2D oTex;
   uniform vec2 resolution;
+  uniform float time;
   varying vec2 uv;
 
   ${Object.values(utilityFunctions)
@@ -89,9 +92,6 @@ export function compileWithSynth(
     uv = position;
     gl_Position = vec4(2.0 * position - 1.0, 0, 1);
   }`,
-    uniforms: {
-      ...synth.environment.defaultUniforms,
-      ...formattedArgumentsMap,
-    },
+    uniforms: formattedArgumentsMap,
   };
 }
